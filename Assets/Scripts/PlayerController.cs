@@ -21,13 +21,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     public float VelocdiadBala;
 
+    public float speed = 5f;
+    public float rotationSpeed = 10f;
 
+    private CharacterController controller;
+    private Transform cameraTransform;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {       
-        balasActuales = maximoBalas;        
+        balasActuales = maximoBalas;
+        controller = GetComponent<CharacterController>();
+        cameraTransform = GetComponent<Transform>();
     }
 
     private void Disparar()
@@ -43,9 +49,24 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Movimiento();
-        
+        Rotacion();
     }
 
+    private void Rotacion()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
+
+        if (direction.magnitude >= 0.1f)
+        {
+            // Rotar el jugador en la dirección de la cámara
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            Quaternion rotation = Quaternion.Euler(0, targetAngle, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+        }
+    }
 
     private void FixedUpdate()
     {   
