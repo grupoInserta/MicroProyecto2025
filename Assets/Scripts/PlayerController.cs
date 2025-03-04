@@ -1,4 +1,6 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+using Unity.Cinemachine;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,76 +10,103 @@ public class PlayerController : MonoBehaviour
     float h;
     public Rigidbody rb;
     [SerializeField]
-    float velocidad = 5f;
+    float velocidadMax = 5f;
+    float velocidad = 0;
     [SerializeField]
     float fuerzaSalto = 5f;
+
+
+    private string ArmaSeleccionada;
     [SerializeField]
-    GameObject salidaBala;
+    GameObject salidaBala1;
     [SerializeField]
-    int maximoBalas;
-    int balasActuales;
+    GameObject salidaBala2;
+
     [SerializeField]
-    public GameObject Bala;
+    int maximoBalas1;
+    [SerializeField]
+    int maximoBalas2;
+
+    int balasActuales1;
+    int balasActuales2;
+
+    [SerializeField]
+    public GameObject Bala1;
+    [SerializeField]
+    public GameObject Bala2;
+
     [SerializeField]
     public float VelocdiadBala;
 
-    public float speed = 5f;
-    public float rotationSpeed = 10f;
-
-    private CharacterController controller;
-    private Transform cameraTransform;
-
+    [SerializeField]
+    private CinemachineCamera virtualCamera;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
-    {       
-        balasActuales = maximoBalas;
-        controller = GetComponent<CharacterController>();
-        cameraTransform = GetComponent<Transform>();
+    {
+        balasActuales1 = maximoBalas1;
+        balasActuales2 = maximoBalas2;
+        rb = GetComponent<Rigidbody>();
+        ArmaSeleccionada = "Rifle";
     }
 
-    private void Disparar()
+    private void Disparar(string tipoArma)
     {
-        balasActuales--;
-        GameObject bala = Instantiate(Bala) as GameObject;
-        bala.transform.position = salidaBala.transform.position;
-        bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, transform.forward);
 
+        if (tipoArma == "Rifle")
+        {
+            balasActuales1--;
+            GameObject bala = Instantiate(Bala1) as GameObject;
+            bala.transform.position = salidaBala1.transform.position;
+            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, transform.forward);
+        }
+        else
+        {
+            balasActuales2--;
+            GameObject bala = Instantiate(Bala2) as GameObject;
+            bala.transform.position = salidaBala2.transform.position;
+            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, transform.forward);
+        }
 
+    }
+
+    private void RotacionyMovimiento()
+    {   // Calcular la direcciï¿½n del movimiento basada en la cï¿½mara (solo forward)
+        Vector3 cameraForward = virtualCamera.transform.forward;
+        Debug.Log(cameraForward);
+        cameraForward.y = 0; // Ignorar la componente Y para que el movimiento sea en el plano horizontal
+        cameraForward.Normalize();
+
+        Vector3 moveDirection = cameraForward; // La direcciï¿½n es siempre forward
+        if (Input.GetKey(KeyCode.W))
+        {
+            rb.linearVelocity = moveDirection * velocidadMax;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            rb.linearVelocity = moveDirection * -velocidadMax;
+        }
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
+        {
+            rb.linearVelocity = Vector3.zero;
+        }
+
+        // ROTACION
+        if (moveDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(moveDirection);
+        }
     }
     // Update is called once per frame
     void Update()
     {
-        Movimiento();
-        Rotacion();
+        SaltarDispararRodar();
+        RotacionyMovimiento();
     }
 
-    private void Rotacion()
+
+    private void SaltarDispararRodar()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-
-        Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
-
-        if (direction.magnitude >= 0.1f)
-        {
-            // Rotar el jugador en la dirección de la cámara
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-            Quaternion rotation = Quaternion.Euler(0, targetAngle, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
-        }
-    }
-
-    private void FixedUpdate()
-    {   
-        AplicarMovimiento();    
-    }
-
-    private void Movimiento()
-    {
-        h = Input.GetAxisRaw("Horizontal");
-        v = Input.GetAxisRaw("Vertical");
-
         if (Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
@@ -88,19 +117,22 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Ruedo");
         }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            if (ArmaSeleccionada == "Rifle")
+            {
+                ArmaSeleccionada = "Pistola";
+            }
+            else
+            {
+                ArmaSeleccionada = "Rifle";
+            }
+        }
 
 
         if (Input.GetMouseButtonDown(0))
         {
-            Disparar();
+            Disparar(ArmaSeleccionada);
         }
     }
-
-
-    private void AplicarMovimiento()
-    {
-        rb.linearVelocity = new Vector3(h * velocidad, rb.linearVelocity.y, v * velocidad);
-    }
-
-
 }
