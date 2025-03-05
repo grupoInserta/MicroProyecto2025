@@ -104,6 +104,18 @@ public class PlayerController : MonoBehaviour
         RotacionyMovimiento();
     }
 
+    public void cargarArma(int tipo)
+    {
+        if (tipo == 1)
+        {
+            balasActuales1 = maximoBalas1;
+        }
+        else
+        {
+            balasActuales2 = maximoBalas2;
+        }
+    }
+
 
     private void SaltarDispararRodar()
     {
