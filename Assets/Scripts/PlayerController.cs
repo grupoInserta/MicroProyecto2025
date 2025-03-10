@@ -12,9 +12,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float velocidadMax = 5f;
     float velocidad = 0;
+    float velocidadLateral = 2f;
+    private bool movimientoLateral;
     [SerializeField]
     float fuerzaSalto = 5f;
-
 
     private string ArmaSeleccionada;
     [SerializeField]
@@ -48,24 +49,31 @@ public class PlayerController : MonoBehaviour
         balasActuales2 = maximoBalas2;
         rb = GetComponent<Rigidbody>();
         ArmaSeleccionada = "Rifle";
+        salidaBala1.transform.rotation = Quaternion.Euler(0, 0, 0);
+        movimientoLateral = false;
+
     }
+
+
 
     private void Disparar(string tipoArma)
     {
 
         if (tipoArma == "Rifle")
         {
+            if (balasActuales1 == 0) return;
             balasActuales1--;
             GameObject bala = Instantiate(Bala1) as GameObject;
             bala.transform.position = salidaBala1.transform.position;
-            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, transform.forward);
+            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, salidaBala1.transform.forward);
         }
         else
         {
+            if (balasActuales2 == 0) return;
             balasActuales2--;
             GameObject bala = Instantiate(Bala2) as GameObject;
             bala.transform.position = salidaBala2.transform.position;
-            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, transform.forward);
+            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, salidaBala2.transform.forward);
         }
 
     }
@@ -73,23 +81,50 @@ public class PlayerController : MonoBehaviour
     private void RotacionyMovimiento()
     {   // Calcular la direcci�n del movimiento basada en la c�mara (solo forward)
         Vector3 cameraForward = virtualCamera.transform.forward;
-        Debug.Log(cameraForward);
+
         cameraForward.y = 0; // Ignorar la componente Y para que el movimiento sea en el plano horizontal
         cameraForward.Normalize();
 
         Vector3 moveDirection = cameraForward; // La direcci�n es siempre forward
         if (Input.GetKey(KeyCode.W))
         {
-            rb.linearVelocity = moveDirection * velocidadMax;
+            velocidad = velocidadMax;
+           
         }
         if (Input.GetKey(KeyCode.S))
         {
-            rb.linearVelocity = moveDirection * -velocidadMax;
+            velocidad = -velocidadMax;                       
         }
+       
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
-            rb.linearVelocity = Vector3.zero;
+            velocidad = 0;
         }
+       
+
+        Vector3 perpendicular = new Vector3(-moveDirection.z, 0, moveDirection.x).normalized;
+        if (Input.GetKey(KeyCode.D))
+        {           
+            rb.linearVelocity = perpendicular * velocidadLateral;
+            Debug.Log("movimiento lateral: "+perpendicular * velocidadLateral);
+            movimientoLateral = true;
+        } 
+        else if (Input.GetKey(KeyCode.A))
+        {
+            rb.linearVelocity = perpendicular * (-velocidadLateral);
+            movimientoLateral = true;
+        }
+        else if(Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+        {
+            movimientoLateral = false;
+        }
+
+        if (movimientoLateral == false)
+        {
+            rb.linearVelocity = moveDirection * velocidad;
+        }
+        
+        
 
         // ROTACION
         if (moveDirection != Vector3.zero)
