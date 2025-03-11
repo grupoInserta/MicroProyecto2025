@@ -8,6 +8,8 @@ TagManager:
   - Municion2
   - Enemigo
   - PuntosEnemigo
+  - Suelo
+  - CajaVida
   layers:
   - Default
   - TransparentFX

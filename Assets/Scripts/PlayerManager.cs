@@ -11,18 +11,24 @@ public class PlayerManager : MonoBehaviour
         salud = 30;
     }
 
+    private void cargarVida(int cantidad)
+    {
+        salud += cantidad;
+        Debug.Log(salud);
+    }
+
     public void damage(string tipo)
     {
-        if(tipo == "enemigo")
+        if (tipo == "enemigo")
         {
             salud -= 5;
-            Debug.Log(salud);
+            Debug.Log("SALUD: " + salud);
         }
         else
         {
             salud -= 10;
         }
-        if(salud < 0)
+        if (salud < 0)
         {
             Debug.Log("PARTIDA PERDIDA!!!!!");
         }
@@ -39,12 +45,12 @@ public class PlayerManager : MonoBehaviour
         {
             miplayerController.cargarArma(2);
             Destroy(other.gameObject);
-        }        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        }
+        else if (other.gameObject.CompareTag("CajaVida"))
+        {
+           cargarVida(10);
+           Destroy(other.gameObject);
+        }
 
     }
 }

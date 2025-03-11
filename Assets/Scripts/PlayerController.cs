@@ -1,13 +1,10 @@
 ﻿using UnityEngine;
 using Unity.Cinemachine;
 
-
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     GameObject player;
-    float v;
-    float h;
     public Rigidbody rb;
     [SerializeField]
     float velocidadMax = 5f;
@@ -41,6 +38,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private CinemachineCamera virtualCamera;
+    private bool saltando;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,14 +49,11 @@ public class PlayerController : MonoBehaviour
         ArmaSeleccionada = "Rifle";
         salidaBala1.transform.rotation = Quaternion.Euler(0, 0, 0);
         movimientoLateral = false;
-
+        saltando = false;
     }
-
-
 
     private void Disparar(string tipoArma)
     {
-
         if (tipoArma == "Rifle")
         {
             if (balasActuales1 == 0) return;
@@ -78,6 +73,22 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Suelo"))
+        {
+            saltando = true;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Suelo"))
+        {
+            saltando = false;
+        }
+    }
+
     private void RotacionyMovimiento()
     {   // Calcular la direcci�n del movimiento basada en la c�mara (solo forward)
         Vector3 cameraForward = virtualCamera.transform.forward;
@@ -89,48 +100,46 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             velocidad = velocidadMax;
-           
         }
         if (Input.GetKey(KeyCode.S))
         {
-            velocidad = -velocidadMax;                       
+            velocidad = -velocidadMax;
         }
-       
+
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
             velocidad = 0;
         }
-       
-
+        
         Vector3 perpendicular = new Vector3(-moveDirection.z, 0, moveDirection.x).normalized;
         if (Input.GetKey(KeyCode.D))
-        {           
-            rb.linearVelocity = perpendicular * velocidadLateral;
-            Debug.Log("movimiento lateral: "+perpendicular * velocidadLateral);
-            movimientoLateral = true;
-        } 
-        else if (Input.GetKey(KeyCode.A))
         {
-            rb.linearVelocity = perpendicular * (-velocidadLateral);
+            rb.linearVelocity = perpendicular * -velocidadLateral;
+            Debug.Log("movimiento lateral: " + perpendicular * velocidadLateral);
             movimientoLateral = true;
         }
-        else if(Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+        else if (Input.GetKey(KeyCode.A))
+        {
+            rb.linearVelocity = perpendicular * (velocidadLateral);
+            movimientoLateral = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
         {
             movimientoLateral = false;
         }
-
-        if (movimientoLateral == false)
+         
+        
+        if (movimientoLateral == false && saltando == false)
         {
             rb.linearVelocity = moveDirection * velocidad;
         }
-        
-        
 
         // ROTACION
         if (moveDirection != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(moveDirection);
         }
+      
     }
     // Update is called once per frame
     void Update()
@@ -138,6 +147,7 @@ public class PlayerController : MonoBehaviour
         SaltarDispararRodar();
         RotacionyMovimiento();
     }
+
 
     public void cargarArma(int tipo)
     {
@@ -157,10 +167,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
+            saltando = true;
             Debug.Log("SALTO");
         }
 
-        if ((Mathf.Abs(velocidad * h) > 0.1f || Mathf.Abs(velocidad * v) > 0.1f) && Input.GetKeyDown(KeyCode.X))
+        if ((Mathf.Abs(velocidad) > 0.1f) && Input.GetKeyDown(KeyCode.X))
         {
             Debug.Log("Ruedo");
         }
@@ -176,10 +187,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-
         if (Input.GetMouseButtonDown(0))
         {
             Disparar(ArmaSeleccionada);
-        }
+        }        
     }
 }
