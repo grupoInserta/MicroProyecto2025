@@ -24,6 +24,11 @@ public class PlayerManager : MonoBehaviour
             salud -= 5;
             Debug.Log("SALUD: " + salud);
         }
+        else if(tipo == "trampa")
+        {
+            salud -= 5;
+            Debug.Log("SALUD menor por trampa: " + salud);
+        }
         else
         {
             salud -= 10;
@@ -50,6 +55,11 @@ public class PlayerManager : MonoBehaviour
         {
            cargarVida(10);
            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.CompareTag("Trampa"))
+        {
+            damage("trampa");
+            Destroy(other.gameObject);
         }
 
     }

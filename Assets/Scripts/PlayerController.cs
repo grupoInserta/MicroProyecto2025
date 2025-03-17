@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -39,10 +40,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CinemachineCamera virtualCamera;
     private bool saltando;
+    private float fixedY;
+    private Animator animacion;
+    private int transionActual;
+
+    private Puerta PuertaObjetoScript;
+   
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        fixedY = -0.08f;
         balasActuales1 = maximoBalas1;
         balasActuales2 = maximoBalas2;
         rb = GetComponent<Rigidbody>();
@@ -50,6 +60,14 @@ public class PlayerController : MonoBehaviour
         salidaBala1.transform.rotation = Quaternion.Euler(0, 0, 0);
         movimientoLateral = false;
         saltando = false;
+        animacion = transform.GetChild(0).GetComponent<Animator>();
+        transionActual = 0;
+        PuertaObjetoScript = GameObject.FindWithTag("Puerta").GetComponent<Puerta>();
+    }
+
+    public void CargarEscena(string escena)
+    {
+        SceneManager.LoadScene(escena);
     }
 
     private void Disparar(string tipoArma)
@@ -85,8 +103,23 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Suelo"))
         {
+            if (saltando)
+            {
+                transionActual = 7;
+            }
             saltando = false;
+        } 
+        if (other.CompareTag("Placa"))
+        {
+            PuertaObjetoScript.IniciarRotacion();
         }
+
+        
+    }
+
+    private void Animar(int transicion)
+    {
+       animacion.SetInteger("Transicion", transicion);
     }
 
     private void RotacionyMovimiento()
@@ -100,15 +133,24 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             velocidad = velocidadMax;
+            transionActual = 1;
         }
         if (Input.GetKey(KeyCode.S))
         {
             velocidad = -velocidadMax;
+            transionActual = 9;
         }
 
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
+        if (Input.GetKeyUp(KeyCode.W) )
         {
             velocidad = 0;
+            transionActual = 5;
+            Debug.Log("me paro");
+        }
+       if (Input.GetKeyUp(KeyCode.S))
+        {
+            velocidad = 0;
+            transionActual = 10;
         }
         
         Vector3 perpendicular = new Vector3(-moveDirection.z, 0, moveDirection.x).normalized;
@@ -141,11 +183,22 @@ public class PlayerController : MonoBehaviour
         }
       
     }
+
+
+
     // Update is called once per frame
     void Update()
     {
         SaltarDispararRodar();
         RotacionyMovimiento();
+        Animar(transionActual);
+    }
+
+    void FixedUpdate()
+    {
+        if (saltando) return;
+        // Bloquear la posición en Y para evitar que el Animator la modifique
+       // transform.GetChild(0).transform.position = new Vector3(transform.GetChild(0).transform.position.x, fixedY, transform.GetChild(0).transform.position.z);
     }
 
 
@@ -168,7 +221,11 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
             saltando = true;
-            Debug.Log("SALTO");
+            transionActual = 3;
+            /*
+            AnimatorStateInfo stateInfo = animacion.GetCurrentAnimatorStateInfo(0); // 0 = Layer base
+            Debug.Log("Estado actual: " + stateInfo.shortNameHash);
+            */
         }
 
         if ((Mathf.Abs(velocidad) > 0.1f) && Input.GetKeyDown(KeyCode.X))

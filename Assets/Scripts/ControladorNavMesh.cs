@@ -25,12 +25,19 @@ public class ControladorNavMesh : MonoBehaviour
         persiguiendo = true;
     }
 
+    private bool IsOnNavMesh(Vector3 position)
+    {
+        NavMeshHit hit;
+        bool isOnNavMesh = NavMesh.SamplePosition(position, out hit, 0.1f, NavMesh.AllAreas);
+        return isOnNavMesh;
+    }
+
     // Update is called once per frame
     public void ActualizarPuntoDestinoNavMeshAgent() // viene del script EstadoPersecucion
     {
         if (Objetivo != null && persiguiendo)
         {
-            if(agente != null)
+            if(agente != null && IsOnNavMesh(agente.transform.position))
             {
                 agente.SetDestination(Objetivo.position); // Mueve al enemigo
             }
