@@ -49,8 +49,13 @@ public class GameManager : MonoBehaviour
 
     public void EliminarEnemigo()
     {
-        numEnemigos--;        
-        if(numEnemigos == 0){
+        numEnemigos--;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("CambioEscena"))
+        {
             numEscena++;
             SceneManager.LoadScene(escenas[numEscena]);
         }

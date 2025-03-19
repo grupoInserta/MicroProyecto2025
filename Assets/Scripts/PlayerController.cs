@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     float fuerzaSalto = 5f;
 
     private string ArmaSeleccionada;
- 
+
     GameObject salidaBala1;
     GameObject salidaBala2;
 
@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
 
-        playerManager = gameObject.GetComponent<PlayerManager>();       
+        playerManager = gameObject.GetComponent<PlayerManager>();
         rb = GetComponent<Rigidbody>();
         ArmaSeleccionada = "Rifle";
         movimientoLateral = false;
@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
         PuertaObjetoScript = GameObject.FindWithTag("Puerta").GetComponent<Puerta>();
     }
 
-   
+
 
     private void Disparar(string tipoArma)
     {
@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Suelo"))
         {
-            saltando = true;            
+            saltando = true;
         }
     }
 
@@ -99,19 +99,17 @@ public class PlayerController : MonoBehaviour
                 transionActual = 7;
             }
             saltando = false;
-            
-        } 
+
+        }
         if (other.CompareTag("Placa"))
         {
             PuertaObjetoScript.IniciarRotacion();
         }
-
-        
     }
 
     private void Animar(int transicion)
     {
-       animacion.SetInteger("Transicion", transicion);
+        animacion.SetInteger("Transicion", transicion);
     }
 
     private void RotacionyMovimiento()
@@ -137,17 +135,17 @@ public class PlayerController : MonoBehaviour
             saltando = false;
         }
 
-        if (Input.GetKeyUp(KeyCode.W) )
+        if (Input.GetKeyUp(KeyCode.W))
         {
             velocidad = 0;
             transionActual = 5;
         }
-       if (Input.GetKeyUp(KeyCode.S))
+        if (Input.GetKeyUp(KeyCode.S))
         {
             velocidad = 0;
             transionActual = 10;
         }
-        
+
         Vector3 perpendicular = new Vector3(-moveDirection.z, 0, moveDirection.x).normalized;
         if (Input.GetKey(KeyCode.D))
         {
@@ -164,19 +162,18 @@ public class PlayerController : MonoBehaviour
         {
             movimientoLateral = false;
         }
-         
-        
+
         if (movimientoLateral == false && saltando == false)
         {
             rb.linearVelocity = moveDirection * velocidad;
-            Debug.Log("ME MUEVO y velocidad = "+ velocidad);
+            Debug.Log("ME MUEVO y velocidad = " + velocidad);
         }
 
         // ROTACION
         if (moveDirection != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(moveDirection);
-        }      
+        }
     }
 
     // Update is called once per frame
@@ -186,7 +183,6 @@ public class PlayerController : MonoBehaviour
         RotacionyMovimiento();
         Animar(transionActual);
     }
-
 
     public void cargarArma(int tipo)
     {
@@ -199,7 +195,6 @@ public class PlayerController : MonoBehaviour
             playerManager.balasActualesP = playerManager.maximoBalasP;
         }
     }
-
 
     private void SaltarDispararRodar()
     {
@@ -233,6 +228,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Disparar(ArmaSeleccionada);
-        }        
+        }
     }
 }

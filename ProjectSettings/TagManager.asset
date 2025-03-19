@@ -10,6 +10,13 @@ TagManager:
   - PuntosEnemigo
   - Suelo
   - CajaVida
+  - SaludData
+  - BalasData
+  - Placa
+  - HUD
+  - Puerta
+  - Trampa
+  - CambioEscena
   layers:
   - Default
   - TransparentFX
