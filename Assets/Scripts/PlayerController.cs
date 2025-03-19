@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Unity.Cinemachine;
-using UnityEngine.SceneManagement;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,18 +16,9 @@ public class PlayerController : MonoBehaviour
     float fuerzaSalto = 5f;
 
     private string ArmaSeleccionada;
-    [SerializeField]
+ 
     GameObject salidaBala1;
-    [SerializeField]
     GameObject salidaBala2;
-
-    [SerializeField]
-    int maximoBalas1;
-    [SerializeField]
-    int maximoBalas2;
-
-    int balasActuales1;
-    int balasActuales2;
 
     [SerializeField]
     public GameObject Bala1;
@@ -40,24 +31,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CinemachineCamera virtualCamera;
     private bool saltando;
-    private float fixedY;
     private Animator animacion;
     private int transionActual;
-
     private Puerta PuertaObjetoScript;
-   
+    private PlayerManager playerManager;
+
 
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        fixedY = -0.08f;
-        balasActuales1 = maximoBalas1;
-        balasActuales2 = maximoBalas2;
+
+        playerManager = gameObject.GetComponent<PlayerManager>();       
         rb = GetComponent<Rigidbody>();
         ArmaSeleccionada = "Rifle";
-        salidaBala1.transform.rotation = Quaternion.Euler(0, 0, 0);
         movimientoLateral = false;
         saltando = false;
         animacion = transform.GetChild(0).GetComponent<Animator>();
@@ -65,37 +53,40 @@ public class PlayerController : MonoBehaviour
         PuertaObjetoScript = GameObject.FindWithTag("Puerta").GetComponent<Puerta>();
     }
 
-    public void CargarEscena(string escena)
-    {
-        SceneManager.LoadScene(escena);
-    }
+   
 
     private void Disparar(string tipoArma)
     {
+        salidaBala1 = GameObject.Find("SalidaBala");
+        salidaBala2 = GameObject.Find("SalidaBala2");
+        Debug.Log("Posición SalidaBala en el momento del disparo: " + salidaBala1.transform.position);
+        Debug.Log("Dirección SalidaBala en el momento del disparo: " + salidaBala1.transform.forward);
         if (tipoArma == "Rifle")
         {
-            if (balasActuales1 == 0) return;
-            balasActuales1--;
-            GameObject bala = Instantiate(Bala1) as GameObject;
+            if (playerManager.balasActualesR == 0) return;
+            playerManager.balasActualesR--;
+            GameObject bala = Instantiate(Bala1, transform.position, transform.rotation);
             bala.transform.position = salidaBala1.transform.position;
-            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, salidaBala1.transform.forward);
+            Vector3 direccion = salidaBala1.transform.TransformDirection(Vector3.forward);
+            bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, direccion);
+
         }
         else
         {
-            if (balasActuales2 == 0) return;
-            balasActuales2--;
-            GameObject bala = Instantiate(Bala2) as GameObject;
+            if (playerManager.balasActualesP == 0) return;
+            playerManager.balasActualesP--;
+
+            GameObject bala = Instantiate(Bala2, transform.position, transform.rotation);
             bala.transform.position = salidaBala2.transform.position;
             bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, salidaBala2.transform.forward);
         }
-
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Suelo"))
         {
-            saltando = true;
+            saltando = true;            
         }
     }
 
@@ -108,6 +99,7 @@ public class PlayerController : MonoBehaviour
                 transionActual = 7;
             }
             saltando = false;
+            
         } 
         if (other.CompareTag("Placa"))
         {
@@ -133,19 +125,22 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             velocidad = velocidadMax;
+            movimientoLateral = false;
+            saltando = false;
             transionActual = 1;
         }
         if (Input.GetKey(KeyCode.S))
         {
             velocidad = -velocidadMax;
             transionActual = 9;
+            movimientoLateral = false;
+            saltando = false;
         }
 
         if (Input.GetKeyUp(KeyCode.W) )
         {
             velocidad = 0;
             transionActual = 5;
-            Debug.Log("me paro");
         }
        if (Input.GetKeyUp(KeyCode.S))
         {
@@ -174,17 +169,15 @@ public class PlayerController : MonoBehaviour
         if (movimientoLateral == false && saltando == false)
         {
             rb.linearVelocity = moveDirection * velocidad;
+            Debug.Log("ME MUEVO y velocidad = "+ velocidad);
         }
 
         // ROTACION
         if (moveDirection != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(moveDirection);
-        }
-      
+        }      
     }
-
-
 
     // Update is called once per frame
     void Update()
@@ -194,23 +187,16 @@ public class PlayerController : MonoBehaviour
         Animar(transionActual);
     }
 
-    void FixedUpdate()
-    {
-        if (saltando) return;
-        // Bloquear la posición en Y para evitar que el Animator la modifique
-       // transform.GetChild(0).transform.position = new Vector3(transform.GetChild(0).transform.position.x, fixedY, transform.GetChild(0).transform.position.z);
-    }
-
 
     public void cargarArma(int tipo)
     {
         if (tipo == 1)
         {
-            balasActuales1 = maximoBalas1;
+            playerManager.balasActualesR = playerManager.maximoBalasR;
         }
         else
         {
-            balasActuales2 = maximoBalas2;
+            playerManager.balasActualesP = playerManager.maximoBalasP;
         }
     }
 
