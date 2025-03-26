@@ -203,7 +203,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 431193341}
-        m_TargetAssemblyTypeName: MenuDerrota, Assembly-CSharp
+        m_TargetAssemblyTypeName: VictoriaDerrota, Assembly-CSharp
         m_MethodName: VolverAlMenu
         m_Mode: 1
         m_Arguments:

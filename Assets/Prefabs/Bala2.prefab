@@ -123,6 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disparo: {fileID: 8300000, guid: 60f1a8e6a6f6aa24e80a9fc291284097, type: 3}
+  explosionPrefab: {fileID: 7332227395223616227, guid: 92d2299624166b04ab659eae7e559f40, type: 3}
 --- !u!82 &-4830781874904537721
 AudioSource:
   m_ObjectHideFlags: 0

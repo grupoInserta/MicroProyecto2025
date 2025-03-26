@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +15,8 @@ public class GameManager : MonoBehaviour
     private int numEnemigos;
     private int numEscena = 0;
     private string[] escenas;
+    private Button botonPausa;
+    public bool JuegoPausado { get; set; }
 
     private void Awake()
     {
@@ -30,6 +35,13 @@ public class GameManager : MonoBehaviour
         escenas[1] = "SegundoNivel";
         escenas[2] = "TercerNivel";
         escenas[3] = "Victoria";
+        botonPausa = GetComponentInChildren<Button>();
+        JuegoPausado = false;
+    }
+
+    public void DerrotaJuego()
+    {
+
     }
 
     private void OnDestroy()
@@ -40,11 +52,35 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("Escena cargada: " + scene.name);
         GameObject[] Enemigos = GameObject.FindGameObjectsWithTag("Enemigo");
         numEnemigos = Enemigos.Length;
         escenaActual = scene.name;
+        if (escenaActual != "PrimerNivel" && escenaActual != "SegundoNivel" && escenaActual != "TercerNivel")
+        {
+            botonPausa.gameObject.SetActive(false);
+        }
+        else
+        {
+            botonPausa.gameObject.SetActive(true);
+        }
     }
+
+    public void PausarJuego()
+    {
+        if (!JuegoPausado)
+        {
+            Time.timeScale = 0f;// Pausa todo el juego
+            JuegoPausado = true;
+            // transform.GetChild(0)
+            botonPausa.GetComponentInChildren<TextMeshProUGUI>().text = "Continuar";
+        }
+        else
+        {
+            JuegoPausado = false;
+            Time.timeScale = 1f;  // Reanuda el juego
+            botonPausa.GetComponentInChildren<TextMeshProUGUI>().text = "Pausar";
+        }         
+    } 
 
 
     public void EliminarEnemigo()
@@ -52,12 +88,17 @@ public class GameManager : MonoBehaviour
         numEnemigos--;
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void CambiarEscena()
+    {     
+       numEscena++;
+       SceneManager.LoadScene(escenas[numEscena]);        
+    }
+
+    private void Update()
     {
-        if(other.CompareTag("CambioEscena"))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            numEscena++;
-            SceneManager.LoadScene(escenas[numEscena]);
+            PausarJuego();
         }
     }
 }
