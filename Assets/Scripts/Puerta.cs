@@ -3,14 +3,28 @@ using System.Collections;
 
 public class Puerta : MonoBehaviour
 {
-    public Vector3 destino;
-    public float duracion = 1f;
 
-    public void IniciarRotacion()
+    public float duracion = 1f;
+    public Transform posicionFinalP1;
+    public Transform posicionFinalP2;
+
+    public void IniciarDesplazamiento(int numPuerta)
     {
-        StartCoroutine(RotarObjeto(transform.rotation, Quaternion.Euler(0, 90, 0), 1f));
+        Transform posFinal;
+        if (numPuerta == 1)
+        {
+            posFinal = posicionFinalP1;
+        }
+        else
+        {
+            posFinal = posicionFinalP2;
+        }
+
+        StartCoroutine(MoverObjeto(transform, posFinal.position, duracion));
+        //StartCoroutine(RotarObjeto(transform.rotation, Quaternion.Euler(0, 90, 0), 1f));
     }
 
+    /*
     IEnumerator RotarObjeto(Quaternion inicio, Quaternion fin, float tiempo)
     {
         float t = 0;
@@ -20,5 +34,21 @@ public class Puerta : MonoBehaviour
             transform.rotation = Quaternion.Lerp(inicio, fin, t);
             yield return null;
         }
+    }
+    */
+
+    private IEnumerator MoverObjeto(Transform obj, Vector3 targetPos, float time)
+    {
+        Vector3 startPos = obj.position;
+        float elapsedTime = 0f;
+        while (elapsedTime < time)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / time;
+            obj.position = Vector3.Lerp(startPos, targetPos, t);
+            yield return null;
+        }
+        obj.position = targetPos;
+        Debug.Log("Animacion de Puerta FINALiZADA");       
     }
 }

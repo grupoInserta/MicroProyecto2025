@@ -9,7 +9,9 @@ public class Bala : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip disparo;
     private GameObject[] Enemigos;
+    private GameObject[] Trampas;
     public GameObject explosionPrefab;
+    public GameObject explosionPrefabMediano;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,23 +19,20 @@ public class Bala : MonoBehaviour
         GameObject Explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         audioSource = GetComponent<AudioSource>();
         Enemigos = GameObject.FindGameObjectsWithTag("Enemigo");
+        Trampas = GameObject.FindGameObjectsWithTag("Trampa");
 
         if (audioSource != null && disparo != null)
         {
             audioSource.clip = disparo;
             audioSource.Play();
         }
+        Explosion.transform.position = transform.position;
         Destroy(Explosion, 5f);
-        Destroy(gameObject, 5f);
-        
-    }
+        Destroy(gameObject, 5f);        
+    }  
 
-    private void Awake()
-    {
-        //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-    }
 
-    // Update is called once per frame
+            // Update is called once per frame
     void Update()
     {
         transform.position += Direccion * VelocdiadBala * Time.deltaTime;
@@ -48,9 +47,26 @@ public class Bala : MonoBehaviour
                 //GameManager.Instance.EliminarEnemigo();
                 Enemigos = GameObject.FindGameObjectsWithTag("Enemigo");
                 // ó utilizar
-                Enemigo.GetComponent<Enemigo>().DamageEnemigo();
+                Enemigo.GetComponent<Enemigo>().DamageEnemigo();// explota
+                Destroy(Enemigo);
             }
         }
+        foreach (GameObject Trampa in Trampas)
+        {
+            if (Trampa == null) continue;
+            float distance = Vector3.Distance(transform.position, Trampa.transform.position);
+            if (distance < 0.28f)
+            {
+                GameObject ExplosionTrampa = Instantiate(explosionPrefabMediano, transform.position, Quaternion.identity);
+                ExplosionTrampa.transform.position = Trampa.transform.position;
+                Destroy(Trampa);
+                Trampas = GameObject.FindGameObjectsWithTag("Trampa");
+                // ó utilizar
+                
+            }
+        }
+
+
     }
 
     public void configurarDisparo(float _VelocdiadBala, Vector3 _direccion)

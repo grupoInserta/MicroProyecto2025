@@ -18,13 +18,24 @@ public class PlayerManager : MonoBehaviour
     private TextMeshProUGUI BalasDataRSalida; // Rifle   
     private TextMeshProUGUI BalasDataPSalida;  // Pistola 
     private TextMeshProUGUI SaludDataSalida;
+    public GameObject LuzVerde1;
+    public GameObject LuzVerde2;
+    public GameObject LuzRoja;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         miplayerController = GetComponent<PlayerController>();
-        salud = 30;
+        salud = 100;
         balasActualesR = maximoBalasR;
-        balasActualesP = maximoBalasP;
+        balasActualesP = maximoBalasP;        
+    }
+
+    public void CambiarLuces()
+    {
+        LuzVerde1.SetActive(true);
+        LuzVerde2.SetActive(true);
+        LuzRoja.SetActive(false);
     }
 
     void OnEnable()
@@ -63,7 +74,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (tipo == "enemigo")
         {
-            salud -= 5;
+            salud -= 15;
             Debug.Log("SALUD: " + salud);
         }
         else if (tipo == "trampa")
@@ -75,7 +86,7 @@ public class PlayerManager : MonoBehaviour
         {
             salud -= 10;
         }
-        // IMPLEMENTAR QUE SE CAIGA EN NIVEL 2 !!!!!!!!!!!!!!!!!!!!!!!!!
+
         if (salud < 0)
         {
             GameManager.Instance.DerrotaJuego();

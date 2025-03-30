@@ -11,8 +11,8 @@ public class MenuInicio : MonoBehaviour
 
     public void IniciarJuego()
     {
-        Debug.Log("INICIO JUEGO");
         SceneManager.LoadScene("PrimerNivel");
+       // SceneManager.LoadScene("SegundoNivel");
     }
 
     public void SalirJuego()

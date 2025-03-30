@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-
 using UnityEngine;
 
 
@@ -11,6 +10,9 @@ public class Enemigo : MonoBehaviour
     public bool detectadoJugador = false;
     private MaquinaDeEstados maquinaDeEstados;
     private float tiempoDespuesGiros = 0;
+    public GameObject explosionPrefabGrande;
+    private AudioSource audioSource;
+    public AudioClip explosion;
 
     // Start is called before the first frame update
     void Awake()
@@ -19,6 +21,9 @@ public class Enemigo : MonoBehaviour
          maquinaDeEstados = gameObject.GetComponent("MaquinaDeEstados") as MaquinaDeEstados;
         //ScriptPath.parar();
         ScriptPath.andar(); // QUITAR
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = explosion;
+       
     }
 
     public void Parar()
@@ -59,10 +64,15 @@ public class Enemigo : MonoBehaviour
         }
     }
 
+   
     public void DamageEnemigo()
     {
+        // explosion
+        audioSource.Play();
+        GameObject Explosion = Instantiate(explosionPrefabGrande, transform.position, Quaternion.identity);
 
     }
+
 
     private void Update()
     {

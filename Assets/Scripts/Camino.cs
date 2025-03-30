@@ -75,8 +75,7 @@ public class Camino : MonoBehaviour
     void Update()
     {
         if (puntosDetectados == false)
-        {           
-
+        { 
             if (ContenedorPuntosObjeto == null)
             {
                 return;
