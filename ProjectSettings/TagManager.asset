@@ -17,6 +17,13 @@ TagManager:
   - Puerta
   - Trampa
   - CambioEscena
+  - SalidaBalaR
+  - SalidaBalaP
+  - Llave
+  - Puerta2
+  - Pared
+  - FinJuego
+  - Muerte
   layers:
   - Default
   - TransparentFX

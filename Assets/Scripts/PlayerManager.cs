@@ -6,14 +6,11 @@ public class PlayerManager : MonoBehaviour
 {
 
     PlayerController miplayerController;
-    public int salud;
-    [SerializeField]
-    public int maximoBalasR;
-    [SerializeField]
+    public int salud;  
+    public int maximoBalasR;   
     public int maximoBalasP;
     public int balasActualesR { get; set; }
     public int balasActualesP { get; set; }
-
     private GameObject HUD;
     private TextMeshProUGUI BalasDataRSalida; // Rifle   
     private TextMeshProUGUI BalasDataPSalida;  // Pistola 
@@ -26,9 +23,7 @@ public class PlayerManager : MonoBehaviour
     void Awake()
     {
         miplayerController = GetComponent<PlayerController>();
-        salud = 100;
-        balasActualesR = maximoBalasR;
-        balasActualesP = maximoBalasP;        
+       
     }
 
     public void CambiarLuces()
@@ -48,19 +43,26 @@ public class PlayerManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void cargadaEscena(Scene scene, LoadSceneMode mode)
     {
-        if( scene.name == "SegundoNivel" || scene.name == "TercerNivel")
+        if (scene.name == "PrimerNivel" || scene.name == "SegundoNivel" || scene.name == "TercerNivel")
         {
             balasActualesR = GameManager.Instance.balasActualesR;
             balasActualesP = GameManager.Instance.balasActualesP;
             salud = GameManager.Instance.salud;
         }
-        // Aquí puedes inicializar al Player
         HUD = GameObject.FindWithTag("HUD");
-        SaludDataSalida = HUD.transform.GetChild(0).transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        BalasDataRSalida = HUD.transform.GetChild(0).transform.GetChild(4).GetComponent<TextMeshProUGUI>();
-        BalasDataPSalida = HUD.transform.GetChild(0).transform.GetChild(5).GetComponent<TextMeshProUGUI>();
+        if(HUD != null)
+        {
+            SaludDataSalida = HUD.transform.GetChild(0).transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+            BalasDataRSalida = HUD.transform.GetChild(0).transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+            BalasDataPSalida = HUD.transform.GetChild(0).transform.GetChild(5).GetComponent<TextMeshProUGUI>();
+        }       
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        cargadaEscena(scene, mode);
     }
 
 
@@ -87,9 +89,9 @@ public class PlayerManager : MonoBehaviour
             salud -= 10;
         }
 
-        if (salud < 0)
+        if (salud <= 0)
         {
-            GameManager.Instance.DerrotaJuego();
+            GameManager.Instance.reinicioEscena();           
         }        
     }
 
@@ -121,6 +123,10 @@ public class PlayerManager : MonoBehaviour
             GameManager.Instance.balasActualesR = balasActualesP;
             GameManager.Instance.salud = salud;
             GameManager.Instance.CambiarEscena();
+        }
+        else if (other.gameObject.CompareTag("Muerte"))
+        {
+            GameManager.Instance.Morir();
         }
     }
     private void Update()

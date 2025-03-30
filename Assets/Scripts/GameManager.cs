@@ -8,17 +8,26 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     // Datos persistentes
+    public int salud;
+    [SerializeField]
+    public int maximoBalasR = 30;
+    [SerializeField]
+    public int maximoBalasP = 30;
     public int balasActualesR { get; set; }
     public int balasActualesP { get; set; }
-    public int salud { get; set; }
-    private string escenaActual;
+    public string escenaActual;
     private int numEscena = 0;
     private string[] escenas;
     private Button botonPausa;
     public bool JuegoPausado { get; set; }
+ 
 
     private void Awake()
     {
+
+        salud = 100;
+        balasActualesR = maximoBalasR;
+        balasActualesP = maximoBalasP;
         if (Instance == null)
         {
             Instance = this;
@@ -38,9 +47,17 @@ public class GameManager : MonoBehaviour
         JuegoPausado = false;
     }
 
-    public void DerrotaJuego()
+    public void reinicioEscena()
     {
+        balasActualesR = 30;
+        balasActualesP = 30;
+        salud = 100;
+        SceneManager.LoadScene("Derrota");
+    }
 
+
+    public void Morir() {
+        SceneManager.LoadScene("Derrota");
     }
 
     private void OnDestroy()
@@ -49,13 +66,24 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    public void FinJuego()
     {
+        SceneManager.LoadScene("Victoria");
+    }
 
-        escenaActual = scene.name;
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {   
+        if(scene.name != "Derrota")
+        {
+            escenaActual = scene.name;
+        }
+        
         if (escenaActual != "PrimerNivel" && escenaActual != "SegundoNivel" && escenaActual != "TercerNivel")
         {
             botonPausa.gameObject.SetActive(false);
+            balasActualesR = 30;
+            balasActualesP = 30;
+            salud = 100;
         }
         else
         {
@@ -81,15 +109,11 @@ public class GameManager : MonoBehaviour
     } 
 
 
-    public void EliminarEnemigo()
-    {
-    
-    }
 
     public void CambiarEscena()
     {     
        numEscena++;
-       SceneManager.LoadScene(escenas[numEscena]);        
+       SceneManager.LoadScene(escenas[numEscena]);       
     }
 
     private void Update()

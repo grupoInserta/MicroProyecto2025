@@ -21,21 +21,9 @@ public class Puerta : MonoBehaviour
         }
 
         StartCoroutine(MoverObjeto(transform, posFinal.position, duracion));
-        //StartCoroutine(RotarObjeto(transform.rotation, Quaternion.Euler(0, 90, 0), 1f));
+
     }
 
-    /*
-    IEnumerator RotarObjeto(Quaternion inicio, Quaternion fin, float tiempo)
-    {
-        float t = 0;
-        while (t < 1)
-        {
-            t += Time.deltaTime / tiempo;
-            transform.rotation = Quaternion.Lerp(inicio, fin, t);
-            yield return null;
-        }
-    }
-    */
 
     private IEnumerator MoverObjeto(Transform obj, Vector3 targetPos, float time)
     {

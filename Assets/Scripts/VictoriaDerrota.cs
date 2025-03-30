@@ -7,4 +7,11 @@ public class VictoriaDerrota : MonoBehaviour
     {
         SceneManager.LoadScene("MenuPrincipal");
     }
+
+    public void VolverAEscenaActual()
+    {
+        SceneManager.LoadScene(GameManager.Instance.escenaActual);
+    }
 }
+
+
