@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     float fuerzaSalto = 30f;//// es la fuerza de salto up
     float fuerzaSaltoAdelante = 4f;// forward
     private float extraGravity = 20f;
-    private float Gravity = 8f;
+    private float Gravity = 15f;
     private string ArmaSeleccionada;
     GameObject salidaBalaR;
     GameObject salidaBalaP;
