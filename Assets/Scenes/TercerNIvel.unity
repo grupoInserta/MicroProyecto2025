@@ -12612,6 +12612,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectadoJugador: 0
+  explosionPrefabGrande: {fileID: 0}
+  explosion: {fileID: 0}
 --- !u!114 &343702187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54203,6 +54205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectadoJugador: 0
+  explosionPrefabGrande: {fileID: 0}
+  explosion: {fileID: 0}
 --- !u!136 &1591722717
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -61206,8 +61210,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239434b1a8bbdd241bf4eb4fa0220d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destino: {x: 0, y: 0, z: 0}
   duracion: 1
+  posicionFinalP1: {fileID: 0}
+  posicionFinalP2: {fileID: 0}
 --- !u!1001 &1790817366
 PrefabInstance:
   m_ObjectHideFlags: 0
