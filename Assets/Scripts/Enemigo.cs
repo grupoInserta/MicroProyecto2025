@@ -18,7 +18,7 @@ public class Enemigo : MonoBehaviour
     void Awake()
     {
         ScriptPath = gameObject.GetComponent("Camino") as Camino;// del propio enemigo
-         maquinaDeEstados = gameObject.GetComponent("MaquinaDeEstados") as MaquinaDeEstados;
+        maquinaDeEstados = gameObject.GetComponent("MaquinaDeEstados") as MaquinaDeEstados;
         //ScriptPath.parar();
         ScriptPath.andar(); // QUITAR
         audioSource = GetComponent<AudioSource>();

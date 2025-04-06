@@ -1184,10 +1184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 567c96b7a68af34468f47082a59f742a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  salud: 100
-  maximoBalasR: 30
-  maximoBalasP: 30
-  escenaActual: 
 --- !u!1 &1269582508
 GameObject:
   m_ObjectHideFlags: 0

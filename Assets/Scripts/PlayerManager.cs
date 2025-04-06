@@ -64,12 +64,9 @@ public class PlayerManager : MonoBehaviour
     {
         cargadaEscena(scene, mode);
     }
-
-
     private void cargarVida(int cantidad)
     {
         salud += cantidad;
-        Debug.Log(salud);
     }
 
     public void damage(string tipo)
@@ -77,12 +74,10 @@ public class PlayerManager : MonoBehaviour
         if (tipo == "enemigo")
         {
             salud -= 15;
-            Debug.Log("SALUD: " + salud);
         }
         else if (tipo == "trampa")
         {
             salud -= 5;
-            Debug.Log("SALUD menor por trampa: " + salud);
         }
         else
         {
@@ -123,10 +118,7 @@ public class PlayerManager : MonoBehaviour
             GameManager.Instance.balasActualesR = balasActualesP;
             GameManager.Instance.salud = salud;
             GameManager.Instance.CambiarEscena();
-        }
-        else if (other.gameObject.CompareTag("Muerte"))
-        {
-            GameManager.Instance.Morir();
+            other.gameObject.GetComponent<MeshCollider>().enabled = false;
         }
     }
     private void Update()

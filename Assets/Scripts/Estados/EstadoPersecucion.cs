@@ -43,7 +43,7 @@ public class EstadoPersecucion : Estado
 
     // Update is called once per frame
     void Update()
-    {        
+    {
         RaycastHit hit;
         if (!controladorVision.puedeVerAlJugador(out hit, true))
         {

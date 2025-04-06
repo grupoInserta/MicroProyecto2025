@@ -897,8 +897,11 @@ MonoBehaviour:
   rb: {fileID: 1578542642}
   velocidadAndando: 5
   fuerzaSalto: 5
+  PlayerModel: {fileID: 0}
   Rifle: {fileID: 0}
+  PosRifle2: {fileID: 0}
   Pistola: {fileID: 0}
+  PistolaMano: {fileID: 0}
   Mano: {fileID: 0}
   Bala1: {fileID: 0}
   Bala2: {fileID: 0}
@@ -1874,6 +1877,9 @@ MonoBehaviour:
   salud: 20
   maximoBalasR: 30
   maximoBalasP: 30
+  LuzVerde1: {fileID: 0}
+  LuzVerde2: {fileID: 0}
+  LuzRoja: {fileID: 0}
 --- !u!1 &2246656085798056466
 GameObject:
   m_ObjectHideFlags: 0
@@ -3105,8 +3111,11 @@ MonoBehaviour:
   rb: {fileID: 3525670715505272148}
   velocidadAndando: 5
   fuerzaSalto: 5
+  PlayerModel: {fileID: 0}
   Rifle: {fileID: 810775594138335086}
+  PosRifle2: {fileID: 0}
   Pistola: {fileID: 772238211892042967}
+  PistolaMano: {fileID: 0}
   Mano: {fileID: 4739602040953608988}
   Bala1: {fileID: 2234863555220941079, guid: aa0c2528140832642bf1ae2ec3f66fd5, type: 3}
   Bala2: {fileID: 2234863555220941079, guid: 2bbc0c557cc94a64395eb71be9124418, type: 3}

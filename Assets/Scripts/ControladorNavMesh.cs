@@ -38,8 +38,9 @@ public class ControladorNavMesh : MonoBehaviour
         if (Objetivo != null && persiguiendo)
         {
             if(agente != null && IsOnNavMesh(agente.transform.position))
-            {
-                agente.SetDestination(Objetivo.position); // Mueve al enemigo
+            {                
+                agente.SetDestination(Objetivo.position); // Mueve al enemigo               
+              
             }
             
             // Hacer que el enemigo mire al objetivo

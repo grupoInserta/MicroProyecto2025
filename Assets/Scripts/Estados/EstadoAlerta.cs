@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class EstadoAlerta : Estado
 {
-    public float velocidadGiroBusqueda = 10f;//grados por segundo
+    public float velocidadGiroBusqueda = 20f;//grados por segundo
     public bool busquedaFinalizada = false;
     private MaquinaDeEstados maquinaDeEstados;
     private ControladorVision controladorVision;

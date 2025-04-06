@@ -55,7 +55,7 @@ public class Bala : MonoBehaviour
         {
             if (Trampa == null) continue;
             float distance = Vector3.Distance(transform.position, Trampa.transform.position);
-            if (distance < 1.28f)
+            if (distance < 0.36f)
             {
                 GameObject ExplosionTrampa = Instantiate(explosionPrefabMediano, transform.position, Quaternion.identity);
                 ExplosionTrampa.transform.position = Trampa.transform.position;

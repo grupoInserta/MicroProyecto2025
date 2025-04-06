@@ -8,6 +8,7 @@ public class ControladorVision : MonoBehaviour
     public Transform Ojos;//Desde dónde lanzamos el rayo
     public Vector3 offset = new Vector3(0f, 0f, 0f);//La posición del jugador está en y=0, por eso la subimos, para que ojos pueda ver en paralelo al suelo
     private ControladorNavMesh controladorNavMesh;
+    private float RadioRayo = 1.0f;
 
 
     void Start()
@@ -35,20 +36,19 @@ public class ControladorVision : MonoBehaviour
             // Vector3.forward es global   y transform.forward es locoal
         }
         Debug.DrawRay(gameObject.transform.position, vectorDireccion * 100, Color.green, 0.2f, false);// se ve rayo verde
-        bool puedeVerlo = Physics.Raycast(Ojos.transform.position, vectorDireccion * 100, out hit, Mathf.Infinity) && hit.collider.CompareTag("Player");
+        bool puedeVerlo = Physics.SphereCast(Ojos.transform.position, RadioRayo, vectorDireccion * 100, out hit, Mathf.Infinity) && hit.collider.CompareTag("Player");
+        //bool puedeVerlo = Physics.Raycast(Ojos.transform.position, vectorDireccion * 100, out hit, Mathf.Infinity) && hit.collider.CompareTag("Player");
         if (puedeVerlo)
         {
             float distancia = hit.distance;
             if (distancia < 0.2f)
             {
-                hit.collider.gameObject.transform.parent.GetComponent<PlayerManager>().damage("enemigo");
+                hit.collider.gameObject.transform.GetComponent<PlayerManager>().damage("enemigo");
+                transform.parent.gameObject.GetComponent<Enemigo>().DamageEnemigo();
                 Destroy(transform.parent.gameObject);
             }
         }
-        Debug.Log("PUDE VER AL JUGADOR: " + puedeVerlo);
         return puedeVerlo;
-
-        // Debug.Log(hit.collider.gameObject.name);
         //(origen del rayo, la dirección del rayo, información de dónde ha impactado, distancia máxima && ha colisionado con el jugador)
     }
 }

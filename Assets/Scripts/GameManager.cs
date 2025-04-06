@@ -24,7 +24,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-
         salud = 100;
         balasActualesR = maximoBalasR;
         balasActualesP = maximoBalasP;
@@ -51,24 +50,14 @@ public class GameManager : MonoBehaviour
     {
         balasActualesR = 30;
         balasActualesP = 30;
-        salud = 100;
-        SceneManager.LoadScene("Derrota");
-    }
-
-
-    public void Morir() {
-        SceneManager.LoadScene("Derrota");
+        salud = 20;
+        SceneManager.LoadScene(escenaActual);
     }
 
     private void OnDestroy()
     {
         // Desuscribirse del evento cuando se destruye el GameManager
         SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    public void FinJuego()
-    {
-        SceneManager.LoadScene("Victoria");
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -81,9 +70,6 @@ public class GameManager : MonoBehaviour
         if (escenaActual != "PrimerNivel" && escenaActual != "SegundoNivel" && escenaActual != "TercerNivel")
         {
             botonPausa.gameObject.SetActive(false);
-            balasActualesR = 30;
-            balasActualesP = 30;
-            salud = 100;
         }
         else
         {
@@ -109,6 +95,10 @@ public class GameManager : MonoBehaviour
     } 
 
 
+    public void EliminarEnemigo()
+    {
+    
+    }
 
     public void CambiarEscena()
     {     
