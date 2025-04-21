@@ -37,7 +37,7 @@ public class ControladorNavMesh : MonoBehaviour
     {
         if (Objetivo != null && persiguiendo)
         {
-            if(agente != null && IsOnNavMesh(agente.transform.position))
+            if(agente != null && agente.isOnNavMesh) //isOnNavMesh propiedad que sustituye al metodo de arriba
             {                
                 agente.SetDestination(Objetivo.position); // Mueve al enemigo               
               

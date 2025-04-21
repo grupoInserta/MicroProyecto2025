@@ -8,17 +8,19 @@ public class Bala : MonoBehaviour
     private float VelocdiadBala;
     private AudioSource audioSource;
     public AudioClip disparo;
-    private GameObject[] Enemigos;
+    private GameObject[] Ojos;
     private GameObject[] Trampas;
     public GameObject explosionPrefab;
     public GameObject explosionPrefabMediano;
+    public GameObject explosionPrefabGrande;
+    public AudioClip explosion;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GameObject Explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         audioSource = GetComponent<AudioSource>();
-        Enemigos = GameObject.FindGameObjectsWithTag("Enemigo");
+        Ojos = GameObject.FindGameObjectsWithTag("ojos");
         Trampas = GameObject.FindGameObjectsWithTag("Trampa");
 
         if (audioSource != null && disparo != null)
@@ -29,26 +31,23 @@ public class Bala : MonoBehaviour
         Explosion.transform.position = transform.position;
         Destroy(Explosion, 5f);
         Destroy(gameObject, 5f);        
-    }  
+    }
 
+    
 
-            // Update is called once per frame
+    // Update is called once per frame
     void Update()
     {
         transform.position += Direccion * VelocdiadBala * Time.deltaTime;
         // contactos con enemigos:
-        foreach (GameObject Enemigo in Enemigos)
+        foreach (GameObject Ojo in Ojos)
         {
-            if (Enemigo == null) continue;
-            float distance = Vector3.Distance(transform.position, Enemigo.transform.position);
-            if (distance < 1f)
-            {
-                Destroy(Enemigo);
-                //GameManager.Instance.EliminarEnemigo();
-                Enemigos = GameObject.FindGameObjectsWithTag("Enemigo");
-                // ó utilizar
-                Enemigo.GetComponent<Enemigo>().DamageEnemigo();// explota
-                Destroy(Enemigo);
+            if (Ojo == null) continue;
+            float distance = Vector3.Distance(transform.position, Ojo.transform.position);
+            if (distance < 0.8f)
+            {                 
+                Ojo.transform.parent.GetComponent<Enemigo>().DamageEnemigo();// explota
+                Ojos = GameObject.FindGameObjectsWithTag("ojos");
             }
         }
         foreach (GameObject Trampa in Trampas)
@@ -61,12 +60,8 @@ public class Bala : MonoBehaviour
                 ExplosionTrampa.transform.position = Trampa.transform.position;
                 Destroy(Trampa);
                 Trampas = GameObject.FindGameObjectsWithTag("Trampa");
-                // ó utilizar
-                
             }
         }
-
-
     }
 
     public void configurarDisparo(float _VelocdiadBala, Vector3 _direccion)

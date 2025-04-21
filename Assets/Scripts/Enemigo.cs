@@ -11,25 +11,23 @@ public class Enemigo : MonoBehaviour
     private MaquinaDeEstados maquinaDeEstados;
     private float tiempoDespuesGiros = 0;
     public GameObject explosionPrefabGrande;
-    private AudioSource audioSource;
     public AudioClip explosion;
+    private AudioSource audioSource;
+
 
     // Start is called before the first frame update
     void Awake()
     {
         ScriptPath = gameObject.GetComponent("Camino") as Camino;// del propio enemigo
         maquinaDeEstados = gameObject.GetComponent("MaquinaDeEstados") as MaquinaDeEstados;
-        //ScriptPath.parar();
-        ScriptPath.andar(); // QUITAR
-        audioSource = GetComponent<AudioSource>();
-        audioSource.clip = explosion;
-       
+        audioSource = gameObject.AddComponent<AudioSource>();
+        ScriptPath.andar();
+        audioSource.playOnAwake = false;
     }
 
     public void Parar()
     {
         ScriptPath.parar();
-       // maquinaDeEstados.Pausar();
     }
 
     public void Seguir()
@@ -62,17 +60,16 @@ public class Enemigo : MonoBehaviour
             maquinaDeEstados.dejarEstadoAlerta();
             ScriptPath.andar();
         }
-    }
+    }   
 
-   
     public void DamageEnemigo()
     {
-        // explosion
+        audioSource.clip = explosion;
         audioSource.Play();
         GameObject Explosion = Instantiate(explosionPrefabGrande, transform.position, Quaternion.identity);
-
+        gameObject.tag = "Untagged";
+        Destroy(gameObject,0.3f);
     }
-
 
     private void Update()
     {

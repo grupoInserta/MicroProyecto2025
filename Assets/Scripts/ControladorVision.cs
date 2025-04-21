@@ -21,11 +21,11 @@ public class ControladorVision : MonoBehaviour
 
     public bool puedeVerAlJugador(out RaycastHit hit, bool mirarHaciaElJugador = false)
     {
+       
         Vector3 vectorDireccion;
 
         if (mirarHaciaElJugador)//En caso de estar en persecución, necesitamos que siga al jugador en cualquier caso, no sólo si lo ve
         {
-
             vectorDireccion = (controladorNavMesh.Objetivo.position + offset) - Ojos.position;
             //La dirección del rayo sería la resta de la posición del jugador - la posición del objeto ojos
         }
@@ -36,8 +36,8 @@ public class ControladorVision : MonoBehaviour
             // Vector3.forward es global   y transform.forward es locoal
         }
         Debug.DrawRay(gameObject.transform.position, vectorDireccion * 100, Color.green, 0.2f, false);// se ve rayo verde
-        bool puedeVerlo = Physics.SphereCast(Ojos.transform.position, RadioRayo, vectorDireccion * 100, out hit, Mathf.Infinity) && hit.collider.CompareTag("Player");
-        //bool puedeVerlo = Physics.Raycast(Ojos.transform.position, vectorDireccion * 100, out hit, Mathf.Infinity) && hit.collider.CompareTag("Player");
+        //bool puedeVerlo = Physics.SphereCast(Ojos.transform.position, RadioRayo, vectorDireccion * 100, out hit, Mathf.Infinity) && hit.collider.CompareTag("Player");
+        bool puedeVerlo = Physics.Raycast(Ojos.transform.position, vectorDireccion * 100, out hit, Mathf.Infinity) && hit.collider.CompareTag("Player");
         if (puedeVerlo)
         {
             float distancia = hit.distance;
@@ -45,7 +45,7 @@ public class ControladorVision : MonoBehaviour
             {
                 hit.collider.gameObject.transform.GetComponent<PlayerManager>().damage("enemigo");
                 transform.parent.gameObject.GetComponent<Enemigo>().DamageEnemigo();
-                Destroy(transform.parent.gameObject);
+                Destroy(transform.parent.gameObject,1f);
             }
         }
         return puedeVerlo;

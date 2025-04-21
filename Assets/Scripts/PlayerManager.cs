@@ -4,7 +4,6 @@ using TMPro;
 
 public class PlayerManager : MonoBehaviour
 {
-
     PlayerController miplayerController;
     public int salud;  
     public int maximoBalasR;   
@@ -22,8 +21,7 @@ public class PlayerManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        miplayerController = GetComponent<PlayerController>();
-       
+        miplayerController = GetComponent<PlayerController>();       
     }
 
     public void CambiarLuces()
@@ -37,7 +35,6 @@ public class PlayerManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
-
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -120,8 +117,12 @@ public class PlayerManager : MonoBehaviour
             GameManager.Instance.CambiarEscena();
             other.gameObject.GetComponent<MeshCollider>().enabled = false;
         }
+        else if (other.CompareTag("FinJuego"))
+        {
+            GameManager.Instance.TerminarJuego();
+        }            
     }
-    private void Update()
+    private void LateUpdate()
     {
         BalasDataRSalida.text = balasActualesR.ToString();
         BalasDataPSalida.text = balasActualesP.ToString();

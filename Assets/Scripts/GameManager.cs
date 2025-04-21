@@ -18,12 +18,18 @@ public class GameManager : MonoBehaviour
     public string escenaActual;
     private int numEscena = 0;
     private string[] escenas;
+    [SerializeField]
+    private GameObject CanvasGameManager;
+    [SerializeField]
     private Button botonPausa;
+    [SerializeField]
+    private Button botonInicio;
     public bool JuegoPausado { get; set; }
  
 
     private void Awake()
     {
+        
         salud = 100;
         balasActualesR = maximoBalasR;
         balasActualesP = maximoBalasP;
@@ -42,15 +48,29 @@ public class GameManager : MonoBehaviour
         escenas[1] = "SegundoNivel";
         escenas[2] = "TercerNivel";
         escenas[3] = "Victoria";
-        botonPausa = GetComponentInChildren<Button>();
         JuegoPausado = false;
     }
 
+    private void IrAInicio()
+    {
+        balasActualesR = 30;
+        balasActualesP = 30;
+        salud = 100;
+        JuegoPausado = false;
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MenuPrincipal");
+    }
+
+    public void TerminarJuego()
+    {
+        SceneManager.LoadScene("Victoria");
+    }
     public void reinicioEscena()
     {
         balasActualesR = 30;
         balasActualesP = 30;
-        salud = 20;
+        salud = 100;
+        CanvasGameManager.SetActive(false);
         SceneManager.LoadScene(escenaActual);
     }
 
@@ -69,36 +89,32 @@ public class GameManager : MonoBehaviour
         
         if (escenaActual != "PrimerNivel" && escenaActual != "SegundoNivel" && escenaActual != "TercerNivel")
         {
-            botonPausa.gameObject.SetActive(false);
+            CanvasGameManager.SetActive(false);
         }
-        else
-        {
-            botonPausa.gameObject.SetActive(true);
-        }
+        
+        botonPausa.onClick.AddListener(() => Reanudar());
+        botonInicio.onClick.AddListener(() => IrAInicio());
+    }
+
+    private void Reanudar()
+    {
+        JuegoPausado = false;
+        Time.timeScale = 1f;  // Reanuda el juego
+                              // botonPausa.GetComponentInChildren<TextMeshProUGUI>().text = "Pausar";
+        CanvasGameManager.SetActive(false);
     }
 
     public void PausarJuego()
     {
         if (!JuegoPausado)
         {
+            CanvasGameManager.SetActive(true);
             Time.timeScale = 0f;// Pausa todo el juego
             JuegoPausado = true;
-            // transform.GetChild(0)
             botonPausa.GetComponentInChildren<TextMeshProUGUI>().text = "Continuar";
         }
-        else
-        {
-            JuegoPausado = false;
-            Time.timeScale = 1f;  // Reanuda el juego
-            botonPausa.GetComponentInChildren<TextMeshProUGUI>().text = "Pausar";
-        }         
+              
     } 
-
-
-    public void EliminarEnemigo()
-    {
-    
-    }
 
     public void CambiarEscena()
     {     

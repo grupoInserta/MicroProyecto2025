@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
 using Unity.Cinemachine;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Collections;
 
 
 public class PlayerController : MonoBehaviour
@@ -11,13 +11,11 @@ public class PlayerController : MonoBehaviour
     public Rigidbody rb;
     [SerializeField]
     float velocidadAndando = 5f;
-    float velocidadRodando = 10f;
     float velocidad = 0;
     float velocidadLateral = 2f;
     private bool movimientoLateral;
     [SerializeField]
     float fuerzaSalto = 6f;//// es la fuerza de salto up
-    float fuerzaSaltoAdelante = 5f;// arriba cuando camina
     private float extraGravity = 20f;
     private float Gravity = 16f;
     private string ArmaSeleccionada;
@@ -34,10 +32,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     public GameObject Pistola;
     [SerializeField]
-    public GameObject PistolaMano;
-    private Vector3 PosIniRifle;
-    private Vector3 PosIniPistola;
+    public GameObject PosPistola2;
+    private Vector3  PosfIniRifle;
     private Quaternion RotIniRifle;
+    private Vector3 PosIniPistola;
     private Quaternion RotIniPistola;
     private Vector3 moveDirection;
     //
@@ -52,6 +50,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CinemachineCamera virtualCamera;
     private bool saltando;
+    private bool cayendo;
     private Animator animacion;
     private int transionActual;
     private Puerta PuertaObjetoScript;
@@ -61,24 +60,36 @@ public class PlayerController : MonoBehaviour
     private float duracionCambioArma = 0.2f;
     private int contadorPlacaPulsada;
     private bool animacionCambio;
-    private float radioCollider;
     private CapsuleCollider capsuleCollider;
-   // private float alturaCapsuleCollider;
+    private BoxCollider boxCollider;
+    private float radioCapsuleCollider;
+    private float alturaBoxcollider;
+    private Vector3 TamanioBoxCollider;
+    // Rodar
+    public float moveSpeed = 5f;
+    private float rollSpeed = 0.092f;
+    [SerializeField]
+    private GameObject CinemachineTarget;
+    private Vector3 IncrementoCMTarget;
+    private bool isRolling = false;
+    private Vector3 rollDirection;
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         playerManager = gameObject.GetComponent<PlayerManager>();
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();       
         capsuleCollider = GetComponent<CapsuleCollider>();
-        //radioCollider = capsuleCollider.radius;      
-        //Vector3 newCenter = capsuleCollider.center;
-        // Ajusta la posición en el eje Y
-        //alturaCapsuleCollider = newCenter.y;
+        boxCollider = GetComponent<BoxCollider>();
+        radioCapsuleCollider = capsuleCollider.radius;
+        alturaBoxcollider = boxCollider.size.y;
+        TamanioBoxCollider = boxCollider.size;
         ArmaSeleccionada = "Rifle";
         movimientoLateral = false;
         saltando = false;
+        cayendo = false;
         animacion = transform.GetChild(0).GetComponent<Animator>();
         transionActual = 0;
         PuertaObjetoScript = GameObject.FindWithTag("Puerta").GetComponent<Puerta>();
@@ -87,57 +98,60 @@ public class PlayerController : MonoBehaviour
         salidaBalaP = GameObject.FindWithTag("SalidaBalaP");
         float cameraAltura = virtualCamera.transform.position.y;
         diferenciaAlturaInicial = cameraAltura - transform.position.y;
-        //
-        PosIniRifle = Rifle.transform.localPosition;
-        PosIniPistola = Pistola.transform.localPosition;
-        RotIniRifle = Rifle.transform.localRotation;
-        RotIniPistola = Pistola.transform.localRotation;
-        //
         animacionCambio = false;
         contadorPlacaPulsada = 0;
+        StartCoroutine(RecordInitialAfterFrame());
+        IncrementoCMTarget = new Vector3(0, 0, 0);
+    }
+
+    private IEnumerator RecordInitialAfterFrame()
+    {
+        yield return null; // esperar a que se acomode el padre
+        PosfIniRifle = Rifle.transform.localPosition;
+        RotIniRifle = Rifle.transform.localRotation;
+        PosIniPistola = Pistola.transform.localPosition; 
+        RotIniPistola = Pistola.transform.localRotation;
     }
 
     private void AnimDePistolaARifle()
     {
-        Pistola.transform.position = transform.position + PosIniPistola;
-        Pistola.transform.rotation =  RotIniPistola;
-        StartCoroutine(AnimateChild(Rifle.transform, transform.position + PosIniRifle, RotIniRifle, duracionCambioArma));
+        StartCoroutine(MoveAndRotateRoutine(Pistola, Pistola.transform.localPosition, PosIniPistola, Pistola.transform.localRotation, RotIniPistola));
+        StartCoroutine(MoveAndRotateRoutine(Rifle, Rifle.transform.localPosition, PosfIniRifle, Rifle.transform.localRotation, RotIniRifle));
     }
 
     private void AnimDeRifleAPistola()
     {
-      
-        Pistola.transform.position = PistolaMano.transform.position;
-        Pistola.transform.rotation = PistolaMano.transform.rotation;
-        StartCoroutine(AnimateChild(Rifle.transform, PosRifle2.transform.position, PosRifle2.transform.rotation, duracionCambioArma));
+        StartCoroutine(MoveAndRotateRoutine(Pistola, Pistola.transform.localPosition, PosPistola2.transform.localPosition, Pistola.transform.localRotation, PosPistola2.transform.localRotation));
+        StartCoroutine(MoveAndRotateRoutine(Rifle, Rifle.transform.localPosition, PosRifle2.transform.localPosition, Rifle.transform.localRotation, PosRifle2.transform.localRotation));
     }
 
-    private IEnumerator AnimateChild(Transform obj, Vector3 targetPos, Quaternion targetRot, float time)
+    private IEnumerator MoveAndRotateRoutine(GameObject obj, Vector3 PosIniObj, Vector3 PosFinalObj, Quaternion RotIniObj, Quaternion RotFinalObj)
     {
-        Vector3 startPos = obj.position;
-        Quaternion startRot = obj.rotation;
-        float elapsedTime = 0f;
+        Vector3 startPos = PosIniObj;
+        Quaternion startRot = RotIniObj;
 
-        while (elapsedTime < time)
+        float elapsed = 0f;
+
+        while (elapsed < duracionCambioArma)
         {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / time;
-            obj.position = Vector3.Lerp(startPos, targetPos, t);
-            obj.rotation = Quaternion.Slerp(startRot, targetRot, t);
+            float t = elapsed / duracionCambioArma;
+            // Puedes usar curvas para easing (por ejemplo, Mathf.SmoothStep)
+            obj.transform.localPosition = Vector3.Lerp(startPos, PosFinalObj, t);
+            obj.transform.localRotation = Quaternion.Slerp(startRot, RotFinalObj, t);
+
+            elapsed += Time.deltaTime;
             yield return null;
         }
-        obj.position = targetPos;
-        obj.rotation = targetRot;
-        Debug.Log("Animacion de Rifle a pistola FINAL");
-        /*
-        animacion.Rebind();
-        animacion.SetInteger("Transicion", 0);
-        */
+
+        // Asegurar posición y rotación final
+        obj.transform.localPosition = PosFinalObj;
+        obj.transform.localRotation = RotFinalObj;
+        //moveRoutine = null;
     }
 
-
+    
     private void Disparar(string tipoArma)
-    {       
+    {
         if (tipoArma == "Rifle")
         {
             if (playerManager.balasActualesR == 0) return;
@@ -158,37 +172,60 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void disminuirColliders()
     {
-        if (other.CompareTag("Suelo"))
+        capsuleCollider.radius = 0.1f;
+        boxCollider.size = new Vector3(0.2f, alturaBoxcollider, 0.2f);
+    }
+
+    private void restaurarColliders()
+    {
+        capsuleCollider.radius = radioCapsuleCollider;
+        boxCollider.size = TamanioBoxCollider;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {    
+        if (other.CompareTag("Plataforma") && !saltando)
         {
-           //
-           // saltando = true;
-        }
+          cayendo = true;
+        }        
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Suelo"))
+        if (other.CompareTag("Suelo") || other.CompareTag("Plataforma"))
         {
             if (saltando)
             {
-                transionActual = 7;                
-               // capsuleCollider.radius = radioCollider;                
+                transionActual = 7;
+                restaurarColliders();                                 
             }
             saltando = false;
-        }       
+            if (cayendo)
+            {
+                cayendo = false;
+                restaurarColliders();
+                GameManager.Instance.reinicioEscena();
+            }
+        } else if (other.CompareTag("zonaCaida"))
+        {
+            cayendo = true;
+            saltando = false;
+            disminuirColliders();            
+        }
 
         if (other.CompareTag("Placa"))
         {
             contadorPlacaPulsada++;
             other.gameObject.GetComponent<BoxCollider>().enabled = false;
             PuertaObjetoScript.IniciarDesplazamiento(1);
-            if(contadorPlacaPulsada == 1)
+            if (contadorPlacaPulsada == 1)
             {
                 PuertaObjetoScript.IniciarDesplazamiento(1);// tercer Nivel
             }
-        } else if(other.CompareTag("Llave"))
+        }
+        else if (other.CompareTag("Llave"))
         {
             playerManager.CambiarLuces();
             other.gameObject.SetActive(false);
@@ -199,11 +236,12 @@ public class PlayerController : MonoBehaviour
     private void Animar(int transicion)
     {
         animacion.SetInteger("Transicion", transicion);
-    }    
+    }
+
+
 
     private void RotacionyMovimiento()
     {
-       
         if (!saltando)
         {
             rb.AddForce(Vector3.down * Gravity, ForceMode.Acceleration);
@@ -211,57 +249,30 @@ public class PlayerController : MonoBehaviour
         else
         {
             rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
-        }        
-        
+        }
+
         // Calcular la direcci�n del movimiento basada en la c�mara (solo forward)
         Vector3 cameraForward = virtualCamera.transform.forward;
         cameraForward.y = 0; // Ignorar la componente Y para que el movimiento sea en el plano horizontal
         cameraForward.Normalize();
-
-        if (Input.GetKeyDown(KeyCode.R)) // CLICRODAR
-        {
-            transionActual = 11;
+       
+        if (Input.GetKeyDown(KeyCode.R)) // CLIC RODAR
+        {           
             velocidad = 0;
-        } 
-        else if (Input.GetKeyUp(KeyCode.R))
-        {
-            velocidad = 0;
+            isRolling = true;
+            //animacion.SetInteger("Transicion", 11);
+            transionActual = 11;            
         }
-
 
 
         moveDirection = cameraForward; // La direcci�n es siempre forward
-        if (Input.GetKey(KeyCode.W) && Input.GetKeyDown(KeyCode.Space))
-        {
-            saltando = true;
-            transform.GetChild(0).GetComponent<BoxCollider>().enabled = false;
-            capsuleCollider.enabled = false;
-            rb.AddForce(Vector3.forward * fuerzaSaltoAdelante, ForceMode.Impulse);
-           // rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
-           /* capsuleCollider.radius = 0.05f;
-            Vector3 newCenter = capsuleCollider.center;
-            newCenter.y = 3f; // Ajusta la posición en el eje Y
-            capsuleCollider.center = newCenter;
-           */
-            //**********
-            Debug.Log("SALTO HACIA DELANTE: "+saltando);
-           // rb.AddForce(new Vector3(0, fuerzaSalto, fuerzaSaltoAdelante), ForceMode.Impulse);
-            
-            if (ArmaSeleccionada == "Rifle")
-            {
-                transionActual = 3;
-            }
-            else
-            {
-                transionActual = 21;
-            }
-        }
         
-        else if (Input.GetKey(KeyCode.W))
-        
+        Debug.Log("SALTO HACIA DELANTE: " + saltando);
+      
+        if (Input.GetKey(KeyCode.W))
         {
             velocidad = velocidadAndando;
-            movimientoLateral = false;           
+            movimientoLateral = false;
 
             if (ArmaSeleccionada == "Rifle")
             {
@@ -269,20 +280,14 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                transionActual = 17;
-            }            
+                 transionActual = 17;
+            }
         }
         // saber si en un salto estamos arriba del todo:
         if (saltando && rb.linearVelocity.y > 0)
-        {
-            /*Vector3 newCenter = capsuleCollider.center;
-            newCenter.y = alturaCapsuleCollider; // Ajusta la posición en el eje Y
-            capsuleCollider.center = newCenter;
-            */
+        {           
             capsuleCollider.enabled = true;
-            transform.GetChild(0).GetComponent<BoxCollider>().enabled = true;
-            Debug.Log("Altura máxima alcanzada en Y = " + transform.position.y);
-            Debug.Log("Velocidad Y:" + rb.linearVelocity.y);
+            boxCollider.enabled = true;
         }
 
 
@@ -302,10 +307,10 @@ public class PlayerController : MonoBehaviour
         }
 
 
-       if (Input.GetKeyUp(KeyCode.W))
+        if (Input.GetKeyUp(KeyCode.W))
         {
             velocidad = 0;
-          
+
             if (ArmaSeleccionada == "Rifle")
             {
                 if (animacion.GetCurrentAnimatorStateInfo(0).IsName("WalkRifle"))
@@ -328,7 +333,7 @@ public class PlayerController : MonoBehaviour
                     transionActual = 20;
                 }
             }
-        }  
+        }
         if (Input.GetKeyUp(KeyCode.S))
         {
             velocidad = 0;
@@ -340,12 +345,13 @@ public class PlayerController : MonoBehaviour
             {
                 transionActual = 24;
             }
-        }       
+        }
 
-        if(saltando == true && animacion.GetCurrentAnimatorStateInfo(0).IsName("JumpRifle"))
+        if (saltando == true && animacion.GetCurrentAnimatorStateInfo(0).IsName("JumpRifle"))
         {
             transionActual = 38;
-        } else if(saltando == true && animacion.GetCurrentAnimatorStateInfo(0).IsName("JumpPistol"))
+        }
+        else if (saltando == true && animacion.GetCurrentAnimatorStateInfo(0).IsName("JumpPistol"))
         {
             transionActual = 22;
         }
@@ -353,10 +359,9 @@ public class PlayerController : MonoBehaviour
         if (animacion.GetCurrentAnimatorStateInfo(0).IsName("WalkRifle") && velocidad == 0)
         { // de andar a parado
             transionActual = 5;
-        }       
+        }
 
-
-         Vector3 perpendicular = new Vector3(-moveDirection.z, 0, moveDirection.x).normalized;
+        Vector3 perpendicular = new Vector3(-moveDirection.z, 0, moveDirection.x).normalized;
         if (Input.GetKey(KeyCode.D))
         {
             rb.linearVelocity = perpendicular * -velocidadLateral;
@@ -374,17 +379,17 @@ public class PlayerController : MonoBehaviour
         }
 
         Debug.Log("saltando: " + saltando);
-        if (movimientoLateral == false && saltando == false)
+        if (movimientoLateral == false && saltando == false && cayendo == false && isRolling == false)
         {
             rb.linearVelocity = moveDirection * velocidad;
-            
-        }       
-       
+        }
 
         // ROTACION
         if (moveDirection != Vector3.zero)
         {
-            transform.rotation = Quaternion.LookRotation(moveDirection * 30f);
+            moveDirection.x *= 2f; // Amplifica el eje X para más sensibilidad lateral
+            moveDirection = moveDirection.normalized;
+            transform.rotation = Quaternion.LookRotation(moveDirection);
         }
         // rotacion rifle con camara
         float cameraAltura = virtualCamera.transform.position.y;
@@ -401,41 +406,61 @@ public class PlayerController : MonoBehaviour
 
     private void controlarRodar()
     {
+        // el tiempo en el que esta rodando
         if (animacion.GetCurrentAnimatorStateInfo(0).IsName("Rodando") &&
-            animacion.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.1f && animacion.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.98f)
+            animacion.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.01f && animacion.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.98f)
         {
             Rifle.SetActive(false);
             Pistola.SetActive(false);
+            /**************************************************************************/
+            IncrementoCMTarget += Vector3.forward * rollSpeed;
+            //CinemachineTarget.transform.position = IncrementoCMTarget;
+            CinemachineTarget.transform.position += Vector3.forward * rollSpeed;
+
         }
         else if (animacion.GetCurrentAnimatorStateInfo(0).IsName("Rodando") &&
-            animacion.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.98f)
+            animacion.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
         {
-            // Cuando termine la animación, actualiza la posición del Player
-            
-            transform.position = PlayerModel.transform.TransformPoint(Vector3.zero);
-            transionActual = 12;
-            //transform.Translate(moveDirection * 2f);
+            rb.MovePosition(CinemachineTarget.transform.position);        
+            Debug.Log("POSICION DESPUES DE RODAR:  "+transform.position);
+            isRolling = false;
             Rifle.SetActive(true);
             Pistola.SetActive(true);
-            // quitar:
-            //GameManager.Instance.JuegoPausado = true;
+            transionActual = 12;
+            Debug.Log("fin rodamiento");
         }
-       
-
-            
     }
 
-        // Update is called once per frame
-        void LateUpdate()
+    void FixedUpdate()
+    {
+        if (!isRolling)
         {
-   
-        if (GameManager.Instance.JuegoPausado == true) return;
+            CinemachineTarget.transform.position = transform.position;
+            CinemachineTarget.transform.rotation = transform.rotation;
+        }
 
+        if (cayendo)
+        {
+            Vector3 gravity = Vector3.down * extraGravity;
+            rb.AddForce(gravity, ForceMode.Acceleration);
+            Debug.Log("Estoy cayendo");
+        }
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (GameManager.Instance.JuegoPausado == true) return;
         Animar(transionActual);
+        if (isRolling)
+        {
+            controlarRodar();
+        }
         RotacionyMovimiento();
         SaltarDispararRodar();
-        controlarRodar();
-        
+               
+
     }
 
 
@@ -458,23 +483,27 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
             saltando = true;
-           
+            boxCollider.enabled = false;
+            capsuleCollider.enabled = false;
+
             if (ArmaSeleccionada == "Rifle")
             {
                 transionActual = 3;
             }
             else
             {
-                transionActual = 21; 
-            }            
-        }  
+                transionActual = 21;
+            }
+        }
 
 
         if (Input.GetKeyDown(KeyCode.X)) // CAMBIO DE ARMA
-        {            
+        {
+            Debug.Log("Tecla X detectada");
             if (ArmaSeleccionada == "Rifle")
             {
                 Debug.Log("cambio de rifle a pistola");
+                AnimDeRifleAPistola();
                 ArmaSeleccionada = "Pistola";
                 transionActual = 13;
                 animacionCambio = true;
@@ -484,11 +513,12 @@ public class PlayerController : MonoBehaviour
                 transionActual = 14;
                 ArmaSeleccionada = "Rifle";
                 Debug.Log("cambio pistola a rifle");
+                AnimDePistolaARifle();
                 //Pistola.transform.SetParent(transform);
                 animacionCambio = true;
             }
         }
-        /**** AC ANIMACIONES CUERPO AUTOMATICAS; SIN PULSAR TECLA ****/ 
+        /**** AC ANIMACIONES CUERPO AUTOMATICAS; SIN PULSAR TECLA ****/
         AnimatorTransitionInfo transitionInfo = animacion.GetAnimatorTransitionInfo(0);
         AnimatorStateInfo stateInfo = animacion.GetCurrentAnimatorStateInfo(0);
         /*
@@ -504,8 +534,8 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("La transición ha finalizado y ahora está en el estado final.");
         } /* ahora queremos que si estamos en la animacion de vuleta al rifle, cuando se termine
            que vaya al estado IDLE Rifle con una transicion que es la 16*/
-        else if(ArmaSeleccionada == "Rifle" && !transitionInfo.IsName("cambioArma2") && animacion.GetCurrentAnimatorStateInfo(0).IsName("CambioArma") && animacionCambio) 
-        { 
+        else if (ArmaSeleccionada == "Rifle" && !transitionInfo.IsName("cambioArma2") && animacion.GetCurrentAnimatorStateInfo(0).IsName("CambioArma") && animacionCambio)
+        {
             transionActual = 16;
             Debug.Log("vuelvo al principio");
             animacionCambio = false;
@@ -514,26 +544,25 @@ public class PlayerController : MonoBehaviour
 
         /*** SA ANIMACIONES ARMA SOLAMENTE ***/
         // la transicion de cambio de arma esta a la mitad
-      
+
         if (ArmaSeleccionada == "Pistola" && stateInfo.IsName("CambioArma") && stateInfo.normalizedTime >= 0.5f && !animacionCambio)
         {
-           // lo hacemos para que las armas se cambien de lugar antes de que termine toda la animacion
-            AnimDeRifleAPistola();
+            // lo hacemos para que las armas se cambien de lugar antes de que termine toda la animacion
+            
             animacionCambio = true;
             Debug.Log("voy por la mitad");
-            
-        } else if (ArmaSeleccionada == "Rifle" && stateInfo.IsName("CambioArma") && stateInfo.normalizedTime >= 0.5f && !animacionCambio)
-        {
-            AnimDePistolaARifle();
+        }
+        else if (ArmaSeleccionada == "Rifle" && stateInfo.IsName("CambioArma") && stateInfo.normalizedTime >= 0.5f && !animacionCambio)
+        {  
             animacionCambio = true;
         }
-        
+
         /*** SA Fin ANIMACIONES ARMA SOLO ***/
 
         if (velocidad == 0 && animacion.GetCurrentAnimatorStateInfo(0).IsName("WalkRifle"))
         {
             transionActual = 5;
-        }         
+        }
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -544,6 +573,6 @@ public class PlayerController : MonoBehaviour
             }
             Disparar(ArmaSeleccionada);
         }
-       
+
     }
 }

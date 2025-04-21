@@ -10,7 +10,7 @@ public class MaquinaDeEstados : MonoBehaviour
     private Estado estadoInicial;
     private Estado estadoActual;
     private Estado estadoPausa;
-
+    private Animator animacion;
 
     //Podríamos establecer la función Awake y referenciar internamente con la instrucción GetComponent<>();
     //pero lo vamos a hacer arrastrando los scripts en el inspector.
@@ -28,11 +28,12 @@ public class MaquinaDeEstados : MonoBehaviour
         estadoAlerta = gameObject.AddComponent(typeof(EstadoAlerta)) as Estado;
         estadoPatrulla = gameObject.AddComponent(typeof(EstadoPatrulla)) as Estado;
         estadoPersecucion = gameObject.AddComponent(typeof(EstadoPersecucion)) as Estado;
-
+        animacion = GetComponent<Animator>();
     }
     void Start()
     {
         ActivarEstado(estadoInicial);
+       // animacion.SetInteger("Transicion", 1);
     }
     public void ActivarEstado(Estado nuevoEstado)
     {//La primera vez que este método se ejecuta, EstadoActual no tiene ningún valor, por lo que obtendríamos una excepción
@@ -48,16 +49,19 @@ public class MaquinaDeEstados : MonoBehaviour
     public void alertar()
     {
         ActivarEstado(estadoAlerta);
+        animacion.SetInteger("Transicion", 2);
     }
 
     public void dejarEstadoAlerta()
     {
         ActivarEstado(estadoPatrulla);
+        animacion.SetInteger("Transicion", 1);
     }
 
     public void perseguir()
     {
         ActivarEstado(estadoPersecucion);
+        animacion.SetInteger("Transicion", 1);
     }
     public void dejarDePerseguir()
     {
@@ -67,6 +71,7 @@ public class MaquinaDeEstados : MonoBehaviour
     public void IniciarPatrulla()
     {
         ActivarEstado(estadoPatrulla);
+        animacion.SetInteger("Transicion", 1);
     }
 
 

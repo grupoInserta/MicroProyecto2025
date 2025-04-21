@@ -12,7 +12,7 @@ public class MenuInicio : MonoBehaviour
     public void IniciarJuego()
     {
         SceneManager.LoadScene("PrimerNivel");
-       // SceneManager.LoadScene("SegundoNivel");
+        //SceneManager.LoadScene("SegundoNivel");
     }
 
     public void SalirJuego()
