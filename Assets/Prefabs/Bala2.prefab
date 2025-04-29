@@ -104,7 +104,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -124,6 +124,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disparo: {fileID: 8300000, guid: 60f1a8e6a6f6aa24e80a9fc291284097, type: 3}
   explosionPrefab: {fileID: 7332227395223616227, guid: 92d2299624166b04ab659eae7e559f40, type: 3}
+  explosionPrefabMediano: {fileID: 7332227395223616227, guid: 561f612706a9e1442b3dc5b6fbf3b69f, type: 3}
+  explosionPrefabGrande: {fileID: 0}
+  explosion: {fileID: 0}
 --- !u!82 &-4830781874904537721
 AudioSource:
   m_ObjectHideFlags: 0

@@ -11,11 +11,14 @@ public class PlayerController : MonoBehaviour
     public Rigidbody rb;
     [SerializeField]
     float velocidadAndando = 5f;
+    float velocidadRodando = 7f;
     float velocidad = 0;
     float velocidadLateral = 2f;
+    private float velModelRollingInvers = 3.9f;// movimiento del modelo hacia atras en animacion rolling para ajustar posiciones
     private bool movimientoLateral;
     [SerializeField]
     float fuerzaSalto = 6f;//// es la fuerza de salto up
+    float fuerzaSaltoRodar = 4f;
     private float extraGravity = 20f;
     private float Gravity = 16f;
     private string ArmaSeleccionada;
@@ -24,7 +27,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     public GameObject PlayerModel;
-
     [SerializeField]
     public GameObject Rifle;
     [SerializeField]
@@ -37,12 +39,16 @@ public class PlayerController : MonoBehaviour
     private Quaternion RotIniRifle;
     private Vector3 PosIniPistola;
     private Quaternion RotIniPistola;
+    private AudioSource audioSource;
+    public AudioClip cambioArma;
     private Vector3 moveDirection;
     //
     [SerializeField]
     public GameObject Mano;
     [SerializeField]
     public GameObject Bala1;
+    [SerializeField]
+    public GameObject BalaPartic;
     [SerializeField]
     public GameObject Bala2;
     [SerializeField]
@@ -67,18 +73,16 @@ public class PlayerController : MonoBehaviour
     private Vector3 TamanioBoxCollider;
     // Rodar
     public float moveSpeed = 5f;
-    private float rollSpeed = 0.092f;
-    [SerializeField]
-    private GameObject CinemachineTarget;
-    private Vector3 IncrementoCMTarget;
     private bool isRolling = false;
-    private Vector3 rollDirection;
-
+    private Vector3 PlayerModelPosicIni;   
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        PlayerModelPosicIni = PlayerModel.transform.localPosition;
+        Debug.Log("POSICIONGGGGGG: "+PlayerModelPosicIni);
+        audioSource = GetComponent<AudioSource>();
         playerManager = gameObject.GetComponent<PlayerManager>();
         rb = GetComponent<Rigidbody>();       
         capsuleCollider = GetComponent<CapsuleCollider>();
@@ -91,6 +95,7 @@ public class PlayerController : MonoBehaviour
         saltando = false;
         cayendo = false;
         animacion = transform.GetChild(0).GetComponent<Animator>();
+        animacion.applyRootMotion = true;
         transionActual = 0;
         PuertaObjetoScript = GameObject.FindWithTag("Puerta").GetComponent<Puerta>();
         Puerta2ObjetoScript = GameObject.FindWithTag("Puerta2").GetComponent<Puerta>();
@@ -101,7 +106,7 @@ public class PlayerController : MonoBehaviour
         animacionCambio = false;
         contadorPlacaPulsada = 0;
         StartCoroutine(RecordInitialAfterFrame());
-        IncrementoCMTarget = new Vector3(0, 0, 0);
+       
     }
 
     private IEnumerator RecordInitialAfterFrame()
@@ -117,12 +122,22 @@ public class PlayerController : MonoBehaviour
     {
         StartCoroutine(MoveAndRotateRoutine(Pistola, Pistola.transform.localPosition, PosIniPistola, Pistola.transform.localRotation, RotIniPistola));
         StartCoroutine(MoveAndRotateRoutine(Rifle, Rifle.transform.localPosition, PosfIniRifle, Rifle.transform.localRotation, RotIniRifle));
+        if (audioSource != null)
+        {
+            audioSource.clip = cambioArma;
+            audioSource.Play();
+        }
     }
 
     private void AnimDeRifleAPistola()
     {
         StartCoroutine(MoveAndRotateRoutine(Pistola, Pistola.transform.localPosition, PosPistola2.transform.localPosition, Pistola.transform.localRotation, PosPistola2.transform.localRotation));
         StartCoroutine(MoveAndRotateRoutine(Rifle, Rifle.transform.localPosition, PosRifle2.transform.localPosition, Rifle.transform.localRotation, PosRifle2.transform.localRotation));
+        if (audioSource != null)
+        {
+            audioSource.clip = cambioArma;
+            audioSource.Play();
+        }
     }
 
     private IEnumerator MoveAndRotateRoutine(GameObject obj, Vector3 PosIniObj, Vector3 PosFinalObj, Quaternion RotIniObj, Quaternion RotFinalObj)
@@ -157,6 +172,7 @@ public class PlayerController : MonoBehaviour
             if (playerManager.balasActualesR == 0) return;
             playerManager.balasActualesR--;
             GameObject bala = Instantiate(Bala1, transform.position, transform.rotation);
+            GameObject balaPart = Instantiate(BalaPartic,transform.position, transform.rotation);
             bala.transform.position = salidaBalaR.transform.position;
             Vector3 direccion = salidaBalaR.transform.TransformDirection(Vector3.forward);
             bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, direccion);
@@ -220,9 +236,11 @@ public class PlayerController : MonoBehaviour
             contadorPlacaPulsada++;
             other.gameObject.GetComponent<BoxCollider>().enabled = false;
             PuertaObjetoScript.IniciarDesplazamiento(1);
+            
             if (contadorPlacaPulsada == 1)
             {
                 PuertaObjetoScript.IniciarDesplazamiento(1);// tercer Nivel
+                
             }
         }
         else if (other.CompareTag("Llave"))
@@ -260,7 +278,6 @@ public class PlayerController : MonoBehaviour
         {           
             velocidad = 0;
             isRolling = true;
-            //animacion.SetInteger("Transicion", 11);
             transionActual = 11;            
         }
 
@@ -269,7 +286,7 @@ public class PlayerController : MonoBehaviour
         
         Debug.Log("SALTO HACIA DELANTE: " + saltando);
       
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) && !isRolling)
         {
             velocidad = velocidadAndando;
             movimientoLateral = false;
@@ -378,7 +395,6 @@ public class PlayerController : MonoBehaviour
             movimientoLateral = false;
         }
 
-        Debug.Log("saltando: " + saltando);
         if (movimientoLateral == false && saltando == false && cayendo == false && isRolling == false)
         {
             rb.linearVelocity = moveDirection * velocidad;
@@ -408,36 +424,31 @@ public class PlayerController : MonoBehaviour
     {
         // el tiempo en el que esta rodando
         if (animacion.GetCurrentAnimatorStateInfo(0).IsName("Rodando") &&
-            animacion.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.01f && animacion.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.98f)
+            animacion.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.02f && animacion.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.7f)
         {
             Rifle.SetActive(false);
             Pistola.SetActive(false);
             /**************************************************************************/
-            IncrementoCMTarget += Vector3.forward * rollSpeed;
-            //CinemachineTarget.transform.position = IncrementoCMTarget;
-            CinemachineTarget.transform.position += Vector3.forward * rollSpeed;
-
+            Debug.Log("RODANDO");
+            rb.linearVelocity = moveDirection * velocidadRodando;
+            PlayerModel.transform.position -= PlayerModel.transform.forward * velModelRollingInvers * Time.deltaTime;
         }
         else if (animacion.GetCurrentAnimatorStateInfo(0).IsName("Rodando") &&
-            animacion.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
-        {
-            rb.MovePosition(CinemachineTarget.transform.position);        
-            Debug.Log("POSICION DESPUES DE RODAR:  "+transform.position);
+             animacion.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.98f)
+        {          
+            Debug.Log("fin animacion rodar");
+            animacion.Play("IDL");
+            PlayerModel.transform.localPosition = PlayerModelPosicIni;
             isRolling = false;
+            transionActual = 0;
             Rifle.SetActive(true);
             Pistola.SetActive(true);
-            transionActual = 12;
-            Debug.Log("fin rodamiento");
-        }
+        }        
     }
 
     void FixedUpdate()
     {
-        if (!isRolling)
-        {
-            CinemachineTarget.transform.position = transform.position;
-            CinemachineTarget.transform.rotation = transform.rotation;
-        }
+
 
         if (cayendo)
         {
@@ -458,8 +469,7 @@ public class PlayerController : MonoBehaviour
             controlarRodar();
         }
         RotacionyMovimiento();
-        SaltarDispararRodar();
-               
+        SaltarDispararRodar();              
 
     }
 

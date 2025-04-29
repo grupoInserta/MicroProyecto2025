@@ -7,9 +7,21 @@ public class Puerta : MonoBehaviour
     public float duracion = 1f;
     public Transform posicionFinalP1;
     public Transform posicionFinalP2;
+    public AudioClip aperturaPuerta;
+    private AudioSource audioSource;
 
-    public void IniciarDesplazamiento(int numPuerta)
+    void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+    }
+
+        public void IniciarDesplazamiento(int numPuerta)
+    {
+        if (audioSource != null)
+        {
+            audioSource.clip = aperturaPuerta;
+            audioSource.Play();
+        }
         Transform posFinal;
         if (numPuerta == 1) // por si hay 2 puertas
         {

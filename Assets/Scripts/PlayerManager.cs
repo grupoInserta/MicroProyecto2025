@@ -17,11 +17,14 @@ public class PlayerManager : MonoBehaviour
     public GameObject LuzVerde1;
     public GameObject LuzVerde2;
     public GameObject LuzRoja;
+    private AudioSource audioSource;
+    public AudioClip obtenerVida;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        miplayerController = GetComponent<PlayerController>();       
+        miplayerController = GetComponent<PlayerController>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void CambiarLuces()
@@ -64,6 +67,12 @@ public class PlayerManager : MonoBehaviour
     private void cargarVida(int cantidad)
     {
         salud += cantidad;
+        if (audioSource != null)
+        {
+            audioSource.clip = obtenerVida;
+            audioSource.Play();
+        }
+
     }
 
     public void damage(string tipo)

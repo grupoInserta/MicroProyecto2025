@@ -66,6 +66,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8264219914668164046}
+  - {fileID: 8694049400203272233}
   - {fileID: 5476785500535471621}
   - {fileID: 9012389985772541233}
   m_Father: {fileID: 0}
@@ -86,15 +87,18 @@ MonoBehaviour:
   rb: {fileID: 3649835159548803874}
   velocidadAndando: 5
   fuerzaSalto: 5
+  PlayerModel: {fileID: 0}
   Rifle: {fileID: 651640341362419992}
   PosRifle2: {fileID: 0}
   Pistola: {fileID: 647649614058324641}
-  PistolaMano: {fileID: 0}
+  PosPistola2: {fileID: 0}
   Mano: {fileID: 4867566128447276394}
   Bala1: {fileID: 2234863555220941079, guid: aa0c2528140832642bf1ae2ec3f66fd5, type: 3}
+  BalaPartic: {fileID: 0}
   Bala2: {fileID: 2234863555220941079, guid: 2bbc0c557cc94a64395eb71be9124418, type: 3}
   VelocdiadBala: 5
   virtualCamera: {fileID: 0}
+  moveSpeed: 5
 --- !u!114 &2245077361848658980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,6 +114,9 @@ MonoBehaviour:
   salud: 20
   maximoBalasR: 30
   maximoBalasP: 30
+  LuzVerde1: {fileID: 0}
+  LuzVerde2: {fileID: 0}
+  LuzRoja: {fileID: 0}
 --- !u!54 &3649835159548803874
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -246,13 +253,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7415640471861195738}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0025724166, y: -0.7071021, z: 0.0025724762, w: -0.70710206}
-  m_LocalPosition: {x: 0.8169995, y: 0.008000173, z: 0.91899997}
-  m_LocalScale: {x: 5.335001, y: 5.335001, z: 5.3350015}
+  m_LocalRotation: {x: -0.013623898, y: 0.013623823, z: 0.70697564, w: -0.7069754}
+  m_LocalPosition: {x: -0.049998354, y: 0.89000046, z: 1.1299995}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 267745684695668763}
-  m_LocalEulerAnglesHint: {x: 179.583, y: 270, z: -180}
+  m_Father: {fileID: 4953328770662127959}
+  m_LocalEulerAnglesHint: {x: 180, y: 177.792, z: -270}
 --- !u!1 &7744459207673225612
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,10 +366,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: cafe3033bd928354088a938c087695bf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8694049400203272233}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cafe3033bd928354088a938c087695bf, type: 3}
 --- !u!4 &267745684695668763 stripped
