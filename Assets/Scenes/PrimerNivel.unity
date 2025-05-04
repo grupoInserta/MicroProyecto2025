@@ -8414,6 +8414,14 @@ PrefabInstance:
       propertyPath: obtenerVida
       value: 
       objectReference: {fileID: 8300000, guid: 30ad8e5a243f3624eaec47783c49a408, type: 3}
+    - target: {fileID: 2245077361848658980, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+      propertyPath: ExplosionPeq
+      value: 
+      objectReference: {fileID: 8300000, guid: 563eaad9a5c6dc0428e4ee57bcd71a19, type: 3}
+    - target: {fileID: 2245077361848658980, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+      propertyPath: explosionPrefab
+      value: 
+      objectReference: {fileID: 7332227395223616227, guid: 92d2299624166b04ab659eae7e559f40, type: 3}
     - target: {fileID: 2616667174692755892, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: m_Avatar
       value: 

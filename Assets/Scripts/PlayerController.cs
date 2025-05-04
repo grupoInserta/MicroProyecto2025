@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     private float velModelRollingInvers = 2.9f;// movimiento del modelo hacia atras en animacion rolling para ajustar posiciones
     private bool movimientoLateral;
     [SerializeField]
-    float fuerzaSalto = 6f;//// es la fuerza de salto up
+    float fuerzaSalto = 7f;//// es la fuerza de salto up
     private float extraGravity = 20f;
     private float Gravity = 16f;
     private string ArmaSeleccionada;
@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour
     private CinemachineCamera virtualCamera;
     private bool saltando;
     private bool cayendo;
+    private bool bajando;
     private Animator animacion;
     private int transionActual;
     private Puerta PuertaObjetoScript;
@@ -92,6 +93,7 @@ public class PlayerController : MonoBehaviour
         movimientoLateral = false;
         saltando = false;
         cayendo = false;
+        bajando = false;
         animacion = transform.GetChild(0).GetComponent<Animator>();
         animacion.applyRootMotion = true;
         transionActual = 0;
@@ -197,7 +199,7 @@ public class PlayerController : MonoBehaviour
     {    
         if (other.CompareTag("Plataforma") && !saltando)
         {
-          //cayendo = true;
+            bajando = true;
         }        
     }
 
@@ -211,11 +213,13 @@ public class PlayerController : MonoBehaviour
                 restaurarColliders();                                 
             }
             saltando = false;
+            bajando = false;
             if (cayendo)
             {
                 cayendo = false;
                 restaurarColliders();
                 GameManager.Instance.reinicioEscena();
+                PuertaObjetoScript.restablecerPosicPuerta();
             }
         } else if (other.CompareTag("zonaCaida"))
         {
@@ -232,8 +236,7 @@ public class PlayerController : MonoBehaviour
             
             if (contadorPlacaPulsada == 1)
             {
-                PuertaObjetoScript.IniciarDesplazamiento(1);// tercer Nivel
-                
+                PuertaObjetoScript.IniciarDesplazamiento(1);// tercer Nivel                
             }
         }
         else if (other.CompareTag("Llave"))
@@ -259,6 +262,12 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
         }
+        if(bajando)
+        {
+            rb.AddForce(Vector3.down * extraGravity * 2f, ForceMode.Acceleration);
+           
+        }
+        
         // Calcular la direcci�n del movimiento basada en la c�mara (solo forward)
         Vector3 cameraForward = virtualCamera.transform.forward;
         cameraForward.y = 0; // Ignorar la componente Y para que el movimiento sea en el plano horizontal
@@ -430,9 +439,8 @@ public class PlayerController : MonoBehaviour
     {
         if (cayendo)
         {
-            Vector3 gravity = Vector3.down * extraGravity;
+            Vector3 gravity = Vector3.down * extraGravity * 1.5f;
             rb.AddForce(gravity, ForceMode.Acceleration);
-            //Debug.Log("Estoy cayendo");
         }        
     }
 
@@ -465,7 +473,7 @@ public class PlayerController : MonoBehaviour
 
     private void SaltarDispararRodar()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && saltando == false)
         {
             rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
             saltando = true;

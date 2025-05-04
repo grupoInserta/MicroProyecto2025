@@ -3,16 +3,17 @@ using System.Collections;
 
 public class Puerta : MonoBehaviour
 {
-
-    public float duracion = 1f;
+    public float duracion = 20f;
     public Transform posicionFinalP1;
     public Transform posicionFinalP2;
     public AudioClip aperturaPuerta;
     private AudioSource audioSource;
+    private Vector3 posIniPuerta;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        posIniPuerta = transform.position;
     }
 
         public void IniciarDesplazamiento(int numPuerta)
@@ -36,21 +37,19 @@ public class Puerta : MonoBehaviour
         //StartCoroutine(RotarObjeto(transform.rotation, Quaternion.Euler(0, 90, 0), 1f));
     }
 
-    /*
-    IEnumerator RotarObjeto(Quaternion inicio, Quaternion fin, float tiempo)
+    public void restablecerPosicPuerta()
     {
-        float t = 0;
-        while (t < 1)
-        {
-            t += Time.deltaTime / tiempo;
-            transform.rotation = Quaternion.Lerp(inicio, fin, t);
-            yield return null;
-        }
+        transform.position = posIniPuerta;
     }
-    */
 
     private IEnumerator MoverObjeto(Transform obj, Vector3 targetPos, float time)
     {
+        if (time <= 0f)
+        {
+            obj.position = targetPos;
+            yield break;
+        }
+
         Vector3 startPos = obj.position;
         float elapsedTime = 0f;
         while (elapsedTime < time)

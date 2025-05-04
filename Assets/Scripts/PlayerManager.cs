@@ -19,6 +19,9 @@ public class PlayerManager : MonoBehaviour
     public GameObject LuzRoja;
     private AudioSource audioSource;
     public AudioClip obtenerVida;
+    public AudioClip ExplosionPeq;
+    [SerializeField]
+    public GameObject explosionPrefab;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -115,6 +118,12 @@ public class PlayerManager : MonoBehaviour
         else if (other.gameObject.CompareTag("Trampa"))
         {
             damage("trampa");
+            if (audioSource != null)
+            {
+                audioSource.clip = ExplosionPeq;
+                audioSource.Play();
+            }
+            GameObject Explosion = Instantiate(explosionPrefab, other.gameObject.transform.position, Quaternion.identity);
             Destroy(other.gameObject);
         }
         else if (other.CompareTag("CambioEscena"))
