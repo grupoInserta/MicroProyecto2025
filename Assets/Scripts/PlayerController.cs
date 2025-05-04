@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     float velocidadRodando = 7f;
     float velocidad = 0;
     float velocidadLateral = 2f;
-    private float velModelRollingInvers = 3.9f;// movimiento del modelo hacia atras en animacion rolling para ajustar posiciones
+    private float velModelRollingInvers = 2.9f;// movimiento del modelo hacia atras en animacion rolling para ajustar posiciones
     private bool movimientoLateral;
     [SerializeField]
     float fuerzaSalto = 6f;//// es la fuerza de salto up
