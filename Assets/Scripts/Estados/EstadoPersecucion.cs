@@ -37,7 +37,7 @@ public class EstadoPersecucion : Estado
 
     public void dejarDePerseguir()
     {
-        Debug.Log("DEJO DE PERSEGUIR");
+        //Debug.Log("DEJO DE PERSEGUIR");
         scriptPath.andar();
     }
 
@@ -53,7 +53,7 @@ public class EstadoPersecucion : Estado
         else
         {
             controladorNavMesh.ActualizarPuntoDestinoNavMeshAgent();
-            Debug.Log("persiguiendo....");
+            //Debug.Log("persiguiendo....");
         }
     }
 }

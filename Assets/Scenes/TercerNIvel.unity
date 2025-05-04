@@ -37786,6 +37786,7 @@ GameObject:
   - component: {fileID: 1136849193}
   - component: {fileID: 1136849192}
   - component: {fileID: 1136849199}
+  - component: {fileID: 1136849200}
   m_Layer: 0
   m_Name: 'FreeLook Camera '
   m_TagString: Untagged
@@ -38020,7 +38021,7 @@ MonoBehaviour:
   TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
-  MinimumDistanceFromTarget: 0.3
+  MinimumDistanceFromTarget: 0.7
   AvoidObstacles:
     Enabled: 1
     DistanceLimit: 0
@@ -38032,7 +38033,7 @@ MonoBehaviour:
     Strategy: 0
     MaximumEffort: 4
     SmoothingTime: 0
-    Damping: 0.4
+    Damping: 0.7
     DampingWhenOccluded: 0.2
   ShotQualityEvaluation:
     Enabled: 0
@@ -38040,6 +38041,23 @@ MonoBehaviour:
     NearLimit: 5
     FarLimit: 30
     MaxQualityBoost: 0.2
+--- !u!114 &1136849200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1136849191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b61c7c7f6a2c2a4f8ce82dcbd172b0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 1488752163}
+  virtualCamera: {fileID: 0}
+  oscillationThreshold: 0.2
+  oscillationFrameCount: 10
+  playerMovementThreshold: 0.05
 --- !u!1001 &1138425234
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50972,6 +50990,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2234863555220941079, guid: aa0c2528140832642bf1ae2ec3f66fd5, type: 3}
     - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1488752164}
+    - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: Pistola
       value: 
       objectReference: {fileID: 1488752162}
@@ -50992,9 +51014,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1488752161}
     - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+      propertyPath: PlayerModel
+      value: 
+      objectReference: {fileID: 2019973053}
+    - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: PosPistola2
       value: 
       objectReference: {fileID: 1804730911}
+    - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+      propertyPath: recargaArma
+      value: 
+      objectReference: {fileID: 8300000, guid: d13280a43e4b3bb45aa23322bf025d6f, type: 3}
     - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: VelocdiadBala
       value: 7
@@ -69404,6 +69434,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: daa430b977fb11c49a33c641c187de77, type: 3}
   m_PrefabInstance: {fileID: 118190732}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2019973053 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8789822054765500788, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+  m_PrefabInstance: {fileID: 1488752159}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &2020454262 stripped
 Transform:

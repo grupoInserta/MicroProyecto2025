@@ -72,7 +72,6 @@ public class PlayerManager : MonoBehaviour
             audioSource.clip = obtenerVida;
             audioSource.Play();
         }
-
     }
 
     public void damage(string tipo)

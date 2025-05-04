@@ -48,12 +48,7 @@ public class EstadoAlerta : Estado
 
     void OnEnable()
     {
-        /*
-        Alerta = GetComponent<AudioSource>();
-        Alerta.enabled = true;
-        Alerta.Play();
-        */
- 
+       
         controladorNavMesh = GetComponent<ControladorNavMesh>();
         controladorNavMesh.DetenerNavMeshAgent();
         controladorNavMesh.enabled = false;

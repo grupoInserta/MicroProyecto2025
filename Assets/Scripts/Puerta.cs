@@ -61,6 +61,6 @@ public class Puerta : MonoBehaviour
             yield return null;
         }
         obj.position = targetPos;
-        Debug.Log("Animacion de Puerta FINALiZADA");       
+        //Debug.Log("Animacion de Puerta FINALiZADA");       
     }
 }

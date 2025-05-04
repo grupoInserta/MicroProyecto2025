@@ -23,7 +23,6 @@ public class EstadoPatrulla : Estado
     private Quaternion rotFinal;
     private Vector3 direccion;
 
-
     private void Start()
     {
         EnemigoScriptPath = Enemigo.GetComponent("Camino") as Camino;
@@ -31,7 +30,6 @@ public class EstadoPatrulla : Estado
         //VER JUGADOR
         maquinaDeEstados = GetComponent<MaquinaDeEstados>();
         controladorVision = transform.GetChild(0).GetComponent<ControladorVision>();
-
         //FIN VER JUGADOR        
     }
     private void OnEnable()
@@ -64,6 +62,5 @@ public class EstadoPatrulla : Estado
             EnemigoScriptPath.parar();
             return;//Volvemos sin seguir debugando el método
         }
-
     }
 }

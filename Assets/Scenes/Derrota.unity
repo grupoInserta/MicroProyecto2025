@@ -368,6 +368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f05ddba4811349b4fbed3e970af764c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sonidoDerrota: {fileID: 8300000, guid: 15c6bb541ff993646b6fef41bb3071be, type: 3}
 --- !u!1 &968731720
 GameObject:
   m_ObjectHideFlags: 0

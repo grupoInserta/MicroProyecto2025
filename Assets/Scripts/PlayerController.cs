@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    GameObject player;
+    GameObject player; // quitar porque se utiliza el componente transform directamente...
     public Rigidbody rb;
     [SerializeField]
     float velocidadAndando = 5f;
@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
     private bool movimientoLateral;
     [SerializeField]
     float fuerzaSalto = 6f;//// es la fuerza de salto up
-    float fuerzaSaltoRodar = 4f;
     private float extraGravity = 20f;
     private float Gravity = 16f;
     private string ArmaSeleccionada;
@@ -42,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip cambioArma;
     private Vector3 moveDirection;
+    public AudioClip recargaArma;
     //
     [SerializeField]
     public GameObject Mano;
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     private Puerta Puerta2ObjetoScript;
     private PlayerManager playerManager;
     private float diferenciaAlturaInicial;
-    private float duracionCambioArma = 0.2f;
+    private float duracionCambioArma = 0.4f;
     private int contadorPlacaPulsada;
     private bool animacionCambio;
     private CapsuleCollider capsuleCollider;
@@ -74,14 +74,12 @@ public class PlayerController : MonoBehaviour
     // Rodar
     public float moveSpeed = 5f;
     private bool isRolling = false;
-    private Vector3 PlayerModelPosicIni;   
-
+    private Vector3 PlayerModelPosicIni;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         PlayerModelPosicIni = PlayerModel.transform.localPosition;
-        Debug.Log("POSICIONGGGGGG: "+PlayerModelPosicIni);
         audioSource = GetComponent<AudioSource>();
         playerManager = gameObject.GetComponent<PlayerManager>();
         rb = GetComponent<Rigidbody>();       
@@ -105,8 +103,7 @@ public class PlayerController : MonoBehaviour
         diferenciaAlturaInicial = cameraAltura - transform.position.y;
         animacionCambio = false;
         contadorPlacaPulsada = 0;
-        StartCoroutine(RecordInitialAfterFrame());
-       
+        StartCoroutine(RecordInitialAfterFrame());       
     }
 
     private IEnumerator RecordInitialAfterFrame()
@@ -144,20 +141,16 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 startPos = PosIniObj;
         Quaternion startRot = RotIniObj;
-
         float elapsed = 0f;
-
         while (elapsed < duracionCambioArma)
         {
             float t = elapsed / duracionCambioArma;
             // Puedes usar curvas para easing (por ejemplo, Mathf.SmoothStep)
             obj.transform.localPosition = Vector3.Lerp(startPos, PosFinalObj, t);
             obj.transform.localRotation = Quaternion.Slerp(startRot, RotFinalObj, t);
-
             elapsed += Time.deltaTime;
             yield return null;
         }
-
         // Asegurar posición y rotación final
         obj.transform.localPosition = PosFinalObj;
         obj.transform.localRotation = RotFinalObj;
@@ -204,7 +197,7 @@ public class PlayerController : MonoBehaviour
     {    
         if (other.CompareTag("Plataforma") && !saltando)
         {
-          cayendo = true;
+          //cayendo = true;
         }        
     }
 
@@ -256,8 +249,6 @@ public class PlayerController : MonoBehaviour
         animacion.SetInteger("Transicion", transicion);
     }
 
-
-
     private void RotacionyMovimiento()
     {
         if (!saltando)
@@ -268,7 +259,6 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
         }
-
         // Calcular la direcci�n del movimiento basada en la c�mara (solo forward)
         Vector3 cameraForward = virtualCamera.transform.forward;
         cameraForward.y = 0; // Ignorar la componente Y para que el movimiento sea en el plano horizontal
@@ -280,17 +270,12 @@ public class PlayerController : MonoBehaviour
             isRolling = true;
             transionActual = 11;            
         }
-
-
-        moveDirection = cameraForward; // La direcci�n es siempre forward
-        
-        Debug.Log("SALTO HACIA DELANTE: " + saltando);
+        moveDirection = cameraForward; // La direcci�n es siempre forward        
       
         if (Input.GetKey(KeyCode.W) && !isRolling)
         {
             velocidad = velocidadAndando;
             movimientoLateral = false;
-
             if (ArmaSeleccionada == "Rifle")
             {
                 transionActual = 1;
@@ -307,7 +292,6 @@ public class PlayerController : MonoBehaviour
             boxCollider.enabled = true;
         }
 
-
         if (Input.GetKey(KeyCode.S))
         {
             velocidad = -velocidadAndando;
@@ -322,7 +306,6 @@ public class PlayerController : MonoBehaviour
             movimientoLateral = false;
             saltando = false;
         }
-
 
         if (Input.GetKeyUp(KeyCode.W))
         {
@@ -351,6 +334,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
         if (Input.GetKeyUp(KeyCode.S))
         {
             velocidad = 0;
@@ -382,7 +366,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
         {
             rb.linearVelocity = perpendicular * -velocidadLateral;
-            Debug.Log("movimiento lateral: " + perpendicular * velocidadLateral);
             movimientoLateral = true;
         }
         else if (Input.GetKey(KeyCode.A))
@@ -419,7 +402,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void controlarRodar()
     {
         // el tiempo en el que esta rodando
@@ -428,15 +410,13 @@ public class PlayerController : MonoBehaviour
         {
             Rifle.SetActive(false);
             Pistola.SetActive(false);
-            /**************************************************************************/
-            Debug.Log("RODANDO");
             rb.linearVelocity = moveDirection * velocidadRodando;
             PlayerModel.transform.position -= PlayerModel.transform.forward * velModelRollingInvers * Time.deltaTime;
         }
         else if (animacion.GetCurrentAnimatorStateInfo(0).IsName("Rodando") &&
              animacion.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.98f)
         {          
-            Debug.Log("fin animacion rodar");
+           // Debug.Log("fin animacion rodar");
             animacion.Play("IDL");
             PlayerModel.transform.localPosition = PlayerModelPosicIni;
             isRolling = false;
@@ -448,15 +428,12 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-
-
         if (cayendo)
         {
             Vector3 gravity = Vector3.down * extraGravity;
             rb.AddForce(gravity, ForceMode.Acceleration);
-            Debug.Log("Estoy cayendo");
-        }
-        
+            //Debug.Log("Estoy cayendo");
+        }        
     }
 
     // Update is called once per frame
@@ -469,10 +446,8 @@ public class PlayerController : MonoBehaviour
             controlarRodar();
         }
         RotacionyMovimiento();
-        SaltarDispararRodar();              
-
+        SaltarDispararRodar();
     }
-
 
     public void cargarArma(int tipo)
     {
@@ -484,8 +459,9 @@ public class PlayerController : MonoBehaviour
         {
             playerManager.balasActualesP = playerManager.maximoBalasP;
         }
+        audioSource.clip = recargaArma;
+        audioSource.Play();
     }
-
 
     private void SaltarDispararRodar()
     {
@@ -509,10 +485,9 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X)) // CAMBIO DE ARMA
         {
-            Debug.Log("Tecla X detectada");
             if (ArmaSeleccionada == "Rifle")
             {
-                Debug.Log("cambio de rifle a pistola");
+               // Debug.Log("cambio de rifle a pistola");
                 AnimDeRifleAPistola();
                 ArmaSeleccionada = "Pistola";
                 transionActual = 13;
@@ -522,9 +497,8 @@ public class PlayerController : MonoBehaviour
             {
                 transionActual = 14;
                 ArmaSeleccionada = "Rifle";
-                Debug.Log("cambio pistola a rifle");
+               // Debug.Log("cambio pistola a rifle");
                 AnimDePistolaARifle();
-                //Pistola.transform.SetParent(transform);
                 animacionCambio = true;
             }
         }
@@ -540,14 +514,13 @@ public class PlayerController : MonoBehaviour
         {
             animacionCambio = false;
             transionActual = 15;
-            Debug.Log("voy a IDLe pistola");
-            //Debug.Log("La transición ha finalizado y ahora está en el estado final.");
+            //Debug.Log("voy a IDLe pistola");
         } /* ahora queremos que si estamos en la animacion de vuleta al rifle, cuando se termine
            que vaya al estado IDLE Rifle con una transicion que es la 16*/
         else if (ArmaSeleccionada == "Rifle" && !transitionInfo.IsName("cambioArma2") && animacion.GetCurrentAnimatorStateInfo(0).IsName("CambioArma") && animacionCambio)
         {
             transionActual = 16;
-            Debug.Log("vuelvo al principio");
+            //Debug.Log("vuelvo al principio de armas");
             animacionCambio = false;
         }
         /*** FIN AC ***/
@@ -558,9 +531,8 @@ public class PlayerController : MonoBehaviour
         if (ArmaSeleccionada == "Pistola" && stateInfo.IsName("CambioArma") && stateInfo.normalizedTime >= 0.5f && !animacionCambio)
         {
             // lo hacemos para que las armas se cambien de lugar antes de que termine toda la animacion
-            
-            animacionCambio = true;
-            Debug.Log("voy por la mitad");
+             animacionCambio = true;
+           // Debug.Log("voy por la mitad");
         }
         else if (ArmaSeleccionada == "Rifle" && stateInfo.IsName("CambioArma") && stateInfo.normalizedTime >= 0.5f && !animacionCambio)
         {  
@@ -583,6 +555,5 @@ public class PlayerController : MonoBehaviour
             }
             Disparar(ArmaSeleccionada);
         }
-
     }
 }

@@ -5368,6 +5368,7 @@ GameObject:
   - component: {fileID: 381320473}
   - component: {fileID: 381320472}
   - component: {fileID: 381320471}
+  - component: {fileID: 381320478}
   m_Layer: 0
   m_Name: 'FreeLook Camera '
   m_TagString: Untagged
@@ -5394,7 +5395,7 @@ MonoBehaviour:
   TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
-  MinimumDistanceFromTarget: 0.3
+  MinimumDistanceFromTarget: 0.5
   AvoidObstacles:
     Enabled: 1
     DistanceLimit: 0
@@ -5406,7 +5407,7 @@ MonoBehaviour:
     Strategy: 0
     MaximumEffort: 4
     SmoothingTime: 0
-    Damping: 0.4
+    Damping: 0.7
     DampingWhenOccluded: 0.2
   ShotQualityEvaluation:
     Enabled: 0
@@ -5622,6 +5623,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &381320478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381320470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b61c7c7f6a2c2a4f8ce82dcbd172b0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 1457804097}
+  virtualCamera: {fileID: 0}
+  oscillationThreshold: 0.2
+  oscillationFrameCount: 10
+  playerMovementThreshold: 0.05
 --- !u!1001 &388650207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8541,6 +8559,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2234863555220941079, guid: aa0c2528140832642bf1ae2ec3f66fd5, type: 3}
     - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 579375257}
+    - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: Pistola
       value: 
       objectReference: {fileID: 579375254}
@@ -8568,6 +8590,10 @@ PrefabInstance:
       propertyPath: PosPistola2
       value: 
       objectReference: {fileID: 1157852322}
+    - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
+      propertyPath: recargaArma
+      value: 
+      objectReference: {fileID: 8300000, guid: d13280a43e4b3bb45aa23322bf025d6f, type: 3}
     - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: VelocdiadBala
       value: 7

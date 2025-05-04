@@ -50,14 +50,7 @@ public class ControladorNavMesh : MonoBehaviour
             {
                 transform.rotation = Quaternion.LookRotation(direction);
             }
-        }
-
-        /*
-        if (persiguiendo)
-        {
-            agente.destination = Objetivo.position;          
-        }
-        */
+        }        
     }
 
     public bool objetivoAlcanzado()
