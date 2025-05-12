@@ -216,12 +216,15 @@ public class PlayerController : MonoBehaviour
             {
                 transionActual = 7;
                 restaurarColliders();
-
             }
             else if (other.CompareTag("Plataforma"))
             {
                 capsuleCollider.enabled = true;
                 boxCollider.enabled = true;
+            }
+            else if(other.CompareTag("Suelo"))
+            {
+                restaurarColliders();
             }
 
             saltando = false;
