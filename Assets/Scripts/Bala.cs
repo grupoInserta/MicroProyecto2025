@@ -19,6 +19,7 @@ public class Bala : MonoBehaviour
     void Start()
     {
         GameObject Explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Destroy(Explosion, 3f);
         audioSource = GetComponent<AudioSource>();
         Ojos = GameObject.FindGameObjectsWithTag("ojos");
         Trampas = GameObject.FindGameObjectsWithTag("Trampa");
@@ -59,6 +60,7 @@ public class Bala : MonoBehaviour
                 GameObject ExplosionTrampa = Instantiate(explosionPrefabMediano, transform.position, Quaternion.identity);
                 ExplosionTrampa.transform.position = Trampa.transform.position;
                 Destroy(Trampa);
+                Destroy(ExplosionTrampa, 3f);
                 Trampas = GameObject.FindGameObjectsWithTag("Trampa");
             }
         }

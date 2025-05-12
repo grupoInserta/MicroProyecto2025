@@ -11,8 +11,7 @@ public class Enemigo : MonoBehaviour
     private MaquinaDeEstados maquinaDeEstados;
     private float tiempoDespuesGiros = 0;
     public GameObject explosionPrefabGrande;
-    public AudioClip explosion;
-    private AudioSource audioSource;
+    private CapsuleCollider capsuleCollider;
 
 
     // Start is called before the first frame update
@@ -20,9 +19,8 @@ public class Enemigo : MonoBehaviour
     {
         ScriptPath = gameObject.GetComponent("Camino") as Camino;// del propio enemigo
         maquinaDeEstados = gameObject.GetComponent("MaquinaDeEstados") as MaquinaDeEstados;
-        audioSource = gameObject.AddComponent<AudioSource>();
         ScriptPath.andar();
-        audioSource.playOnAwake = false;
+        capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
     public void Parar()
@@ -60,15 +58,23 @@ public class Enemigo : MonoBehaviour
             maquinaDeEstados.dejarEstadoAlerta();
             ScriptPath.andar();
         }
-    }   
+    }
+
+    private IEnumerator DestroyNextFrame()
+    {
+        yield return null; // espera 1 frame
+        Destroy(gameObject);
+    }
 
     public void DamageEnemigo()
     {
-        audioSource.clip = explosion;
-        audioSource.Play();
+
         GameObject Explosion = Instantiate(explosionPrefabGrande, transform.position, Quaternion.identity);
+        Destroy(Explosion, 3f);
         gameObject.tag = "Untagged";
-        Destroy(gameObject,0.3f);
+        // Destroy(gameObject,1f);
+        StartCoroutine(DestroyNextFrame());
+        capsuleCollider.enabled = false;
     }
 
     private void Update()

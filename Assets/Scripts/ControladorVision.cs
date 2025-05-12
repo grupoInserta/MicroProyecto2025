@@ -45,7 +45,7 @@ public class ControladorVision : MonoBehaviour
             {
                 hit.collider.gameObject.transform.GetComponent<PlayerManager>().damage("enemigo");
                 transform.parent.gameObject.GetComponent<Enemigo>().DamageEnemigo();
-                Destroy(transform.parent.gameObject,1f);
+                
             }
         }
         return puedeVerlo;

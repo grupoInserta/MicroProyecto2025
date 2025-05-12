@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Puerta : MonoBehaviour
 {
-    public float duracion = 20f;
+    private float duracion = 12f;
     public Transform posicionFinalP1;
     public Transform posicionFinalP2;
     public AudioClip aperturaPuerta;
@@ -16,7 +16,7 @@ public class Puerta : MonoBehaviour
         posIniPuerta = transform.position;
     }
 
-        public void IniciarDesplazamiento(int numPuerta)
+    public void IniciarDesplazamiento(int numPuerta)
     {
         if (audioSource != null)
         {
@@ -44,22 +44,20 @@ public class Puerta : MonoBehaviour
 
     private IEnumerator MoverObjeto(Transform obj, Vector3 targetPos, float time)
     {
-        if (time <= 0f)
-        {
-            obj.position = targetPos;
-            yield break;
-        }
-
+       
         Vector3 startPos = obj.position;
         float elapsedTime = 0f;
+        int contador = 0;
         while (elapsedTime < time)
         {
+            contador++;
             elapsedTime += Time.deltaTime;
-            float t = elapsedTime / time;
+            //float t = elapsedTime / time;
+            float t = Mathf.Clamp01(elapsedTime / time);
             obj.position = Vector3.Lerp(startPos, targetPos, t);
-            yield return null;
+            yield return null; //  pausa la ejecución de la corrutina hasta el siguiente frame.
         }
         obj.position = targetPos;
-        //Debug.Log("Animacion de Puerta FINALiZADA");       
+  
     }
 }

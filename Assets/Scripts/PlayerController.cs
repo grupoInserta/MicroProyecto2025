@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     public GameObject Pistola;
     [SerializeField]
     public GameObject PosPistola2;
-    private Vector3  PosfIniRifle;
+    private Vector3 PosfIniRifle;
     private Quaternion RotIniRifle;
     private Vector3 PosIniPistola;
     private Quaternion RotIniPistola;
@@ -56,15 +56,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CinemachineCamera virtualCamera;
     private bool saltando;
-    private bool cayendo;
-    private bool bajando;
+    private bool cayendo;// del parkour del segundo nivel
+    private bool bajando;// de la placa roja del segundo nivel
     private Animator animacion;
     private int transionActual;
     private Puerta PuertaObjetoScript;
     private Puerta Puerta2ObjetoScript;
     private PlayerManager playerManager;
     private float diferenciaAlturaInicial;
-    private float duracionCambioArma = 0.4f;
+    private float duracionCambioArma = 0.7f;
     private int contadorPlacaPulsada;
     private bool animacionCambio;
     private CapsuleCollider capsuleCollider;
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
         PlayerModelPosicIni = PlayerModel.transform.localPosition;
         audioSource = GetComponent<AudioSource>();
         playerManager = gameObject.GetComponent<PlayerManager>();
-        rb = GetComponent<Rigidbody>();       
+        rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         boxCollider = GetComponent<BoxCollider>();
         radioCapsuleCollider = capsuleCollider.radius;
@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
         diferenciaAlturaInicial = cameraAltura - transform.position.y;
         animacionCambio = false;
         contadorPlacaPulsada = 0;
-        StartCoroutine(RecordInitialAfterFrame());       
+        StartCoroutine(RecordInitialAfterFrame());
     }
 
     private IEnumerator RecordInitialAfterFrame()
@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
         yield return null; // esperar a que se acomode el padre
         PosfIniRifle = Rifle.transform.localPosition;
         RotIniRifle = Rifle.transform.localRotation;
-        PosIniPistola = Pistola.transform.localPosition; 
+        PosIniPistola = Pistola.transform.localPosition;
         RotIniPistola = Pistola.transform.localRotation;
     }
 
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour
         //moveRoutine = null;
     }
 
-    
+
     private void Disparar(string tipoArma)
     {
         if (tipoArma == "Rifle")
@@ -167,7 +167,8 @@ public class PlayerController : MonoBehaviour
             if (playerManager.balasActualesR == 0) return;
             playerManager.balasActualesR--;
             GameObject bala = Instantiate(Bala1, transform.position, transform.rotation);
-            GameObject balaPart = Instantiate(BalaPartic,transform.position, transform.rotation);
+            GameObject balaPart = Instantiate(BalaPartic, transform.position, transform.rotation);
+            Destroy(balaPart, 2f);
             bala.transform.position = salidaBalaR.transform.position;
             Vector3 direccion = salidaBalaR.transform.TransformDirection(Vector3.forward);
             bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, direccion);
@@ -176,13 +177,17 @@ public class PlayerController : MonoBehaviour
         {
             if (playerManager.balasActualesP == 0) return;
             playerManager.balasActualesP--;
-
             GameObject bala = Instantiate(Bala2, transform.position, transform.rotation);
             bala.transform.position = salidaBalaP.transform.position;
             bala.GetComponent<Bala>().configurarDisparo(VelocdiadBala, salidaBalaP.transform.forward);
         }
     }
 
+    /* se llama cuando salta y en este caso se desactivan los colliders
+     para volverse a activa arriba del todo
+     y tambien cunado en el parkour toca con la zona de caida para que no estorben
+     los colliders de las plataformas 
+    */
     private void disminuirColliders()
     {
         capsuleCollider.radius = 0.1f;
@@ -196,36 +201,46 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnTriggerExit(Collider other)
-    {    
+    {
         if (other.CompareTag("Plataforma") && !saltando)
         {
-            bajando = true;
-        }        
+            bajando = true; // de la plataforma
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Suelo") || other.CompareTag("Plataforma"))
         {
-            if (saltando)
+            if (saltando && other.CompareTag("Suelo"))
             {
                 transionActual = 7;
-                restaurarColliders();                                 
+                restaurarColliders();
+
             }
+            else if (other.CompareTag("Plataforma"))
+            {
+                capsuleCollider.enabled = true;
+                boxCollider.enabled = true;
+            }
+
             saltando = false;
             bajando = false;
+            
             if (cayendo)
             {
                 cayendo = false;
-                restaurarColliders();
                 GameManager.Instance.reinicioEscena();
                 PuertaObjetoScript.restablecerPosicPuerta();
+                restaurarColliders();
             }
-        } else if (other.CompareTag("zonaCaida"))
-        {
+        }
+        else if (other.CompareTag("zonaCaida"))
+        { /* cambiar esto por ontriggerstay?? */
             cayendo = true;
             saltando = false;
-            disminuirColliders();            
+            disminuirColliders();
+            Debug.Log("estoy en zona caida");
         }
 
         if (other.CompareTag("Placa"))
@@ -233,8 +248,8 @@ public class PlayerController : MonoBehaviour
             contadorPlacaPulsada++;
             other.gameObject.GetComponent<BoxCollider>().enabled = false;
             PuertaObjetoScript.IniciarDesplazamiento(1);
-            
-            if (contadorPlacaPulsada == 1)
+
+            if (contadorPlacaPulsada == 2)
             {
                 PuertaObjetoScript.IniciarDesplazamiento(1);// tercer Nivel                
             }
@@ -244,6 +259,8 @@ public class PlayerController : MonoBehaviour
             playerManager.CambiarLuces();
             other.gameObject.SetActive(false);
             Puerta2ObjetoScript.IniciarDesplazamiento(2);
+            audioSource.clip = playerManager.obtenerVida;
+            audioSource.Play();
         }
     }
 
@@ -262,25 +279,24 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
         }
-        if(bajando)
+        if (bajando) // sale de una placa o de una plataforma
         {
-            rb.AddForce(Vector3.down * extraGravity * 2f, ForceMode.Acceleration);
-           
+            rb.AddForce(Vector3.down * extraGravity * 5f, ForceMode.Acceleration);
         }
-        
+
         // Calcular la direcci�n del movimiento basada en la c�mara (solo forward)
         Vector3 cameraForward = virtualCamera.transform.forward;
         cameraForward.y = 0; // Ignorar la componente Y para que el movimiento sea en el plano horizontal
         cameraForward.Normalize();
-       
+
         if (Input.GetKeyDown(KeyCode.R)) // CLIC RODAR
-        {           
+        {
             velocidad = 0;
             isRolling = true;
-            transionActual = 11;            
+            transionActual = 11;
         }
         moveDirection = cameraForward; // La direcci�n es siempre forward        
-      
+
         if (Input.GetKey(KeyCode.W) && !isRolling)
         {
             velocidad = velocidadAndando;
@@ -291,12 +307,12 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                 transionActual = 17;
+                transionActual = 17;
             }
         }
         // saber si en un salto estamos arriba del todo:
         if (saltando && rb.linearVelocity.y > 0)
-        {           
+        {
             capsuleCollider.enabled = true;
             boxCollider.enabled = true;
         }
@@ -395,7 +411,7 @@ public class PlayerController : MonoBehaviour
         // ROTACION
         if (moveDirection != Vector3.zero)
         {
-            moveDirection.x *= 2f; // Amplifica el eje X para más sensibilidad lateral
+            moveDirection.x *= 2f; // Amplifica el bajandoeje X para más sensibilidad lateral
             moveDirection = moveDirection.normalized;
             transform.rotation = Quaternion.LookRotation(moveDirection);
         }
@@ -424,15 +440,15 @@ public class PlayerController : MonoBehaviour
         }
         else if (animacion.GetCurrentAnimatorStateInfo(0).IsName("Rodando") &&
              animacion.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.98f)
-        {          
-           // Debug.Log("fin animacion rodar");
+        {
+            // Debug.Log("fin animacion rodar");
             animacion.Play("IDL");
             PlayerModel.transform.localPosition = PlayerModelPosicIni;
             isRolling = false;
             transionActual = 0;
             Rifle.SetActive(true);
             Pistola.SetActive(true);
-        }        
+        }
     }
 
     void FixedUpdate()
@@ -441,7 +457,7 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 gravity = Vector3.down * extraGravity * 1.5f;
             rb.AddForce(gravity, ForceMode.Acceleration);
-        }        
+        }
     }
 
     // Update is called once per frame
@@ -477,6 +493,7 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
             saltando = true;
+            disminuirColliders();
             boxCollider.enabled = false;
             capsuleCollider.enabled = false;
 
@@ -495,7 +512,7 @@ public class PlayerController : MonoBehaviour
         {
             if (ArmaSeleccionada == "Rifle")
             {
-               // Debug.Log("cambio de rifle a pistola");
+                // Debug.Log("cambio de rifle a pistola");
                 AnimDeRifleAPistola();
                 ArmaSeleccionada = "Pistola";
                 transionActual = 13;
@@ -505,7 +522,7 @@ public class PlayerController : MonoBehaviour
             {
                 transionActual = 14;
                 ArmaSeleccionada = "Rifle";
-               // Debug.Log("cambio pistola a rifle");
+                // Debug.Log("cambio pistola a rifle");
                 AnimDePistolaARifle();
                 animacionCambio = true;
             }
@@ -539,11 +556,11 @@ public class PlayerController : MonoBehaviour
         if (ArmaSeleccionada == "Pistola" && stateInfo.IsName("CambioArma") && stateInfo.normalizedTime >= 0.5f && !animacionCambio)
         {
             // lo hacemos para que las armas se cambien de lugar antes de que termine toda la animacion
-             animacionCambio = true;
-           // Debug.Log("voy por la mitad");
+            animacionCambio = true;
+            // Debug.Log("voy por la mitad");
         }
         else if (ArmaSeleccionada == "Rifle" && stateInfo.IsName("CambioArma") && stateInfo.normalizedTime >= 0.5f && !animacionCambio)
-        {  
+        {
             animacionCambio = true;
         }
 

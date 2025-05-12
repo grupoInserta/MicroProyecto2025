@@ -148,7 +148,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.58
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &9560658
 PrefabInstance:
@@ -7668,7 +7668,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.58
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &510483362
 PrefabInstance:
@@ -8241,7 +8241,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.58
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &557241361 stripped
 Transform:
@@ -8456,7 +8456,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3655608725776624955, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: m_Radius
-      value: 0.8
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3655608725776624955, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: m_Enabled
@@ -9376,7 +9376,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.58
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &663845837 stripped
 Transform:
@@ -10145,7 +10145,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.58
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &698005813 stripped
 Transform:
@@ -10793,7 +10793,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239434b1a8bbdd241bf4eb4fa0220d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duracion: 1
   posicionFinalP1: {fileID: 0}
   posicionFinalP2: {fileID: 0}
   aperturaPuerta: {fileID: 0}
@@ -13782,7 +13781,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.58
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &998428861
 GameObject:
@@ -15502,7 +15501,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.58
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1152260993 stripped
 Transform:
@@ -19380,8 +19379,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.84604573, y: 0.8930319, z: 0.291364}
-  m_Center: {x: 0.32, y: 1.93, z: 0.65}
+  m_Size: {x: 1.13, y: 2.2, z: 1}
+  m_Center: {x: 0.32, y: 1.11, z: 0.65}
 --- !u!82 &1457804099
 AudioSource:
   m_ObjectHideFlags: 0

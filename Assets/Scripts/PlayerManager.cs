@@ -132,7 +132,14 @@ public class PlayerManager : MonoBehaviour
             GameManager.Instance.balasActualesR = balasActualesP;
             GameManager.Instance.salud = salud;
             GameManager.Instance.CambiarEscena();
-            other.gameObject.GetComponent<MeshCollider>().enabled = false;
+            if(other.gameObject.GetComponent<BoxCollider>() != null)
+            {
+                other.gameObject.GetComponent<BoxCollider>().enabled = false;
+            }
+            else{
+                other.gameObject.GetComponent<MeshCollider>().enabled = false;
+            }
+            
         }
         else if (other.CompareTag("FinJuego"))
         {

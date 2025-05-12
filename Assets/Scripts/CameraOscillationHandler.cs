@@ -5,9 +5,11 @@ public class CameraOscillationHandler : MonoBehaviour
 {
     public Transform playerTransform;
     public CinemachineCamera virtualCamera;
-    public float oscillationThreshold = 0.2f; // distancia entre frames que se considera "temblor"
+    private float oscillationThreshold = 0.1f; // distancia entre frames que se considera "temblor"
     public int oscillationFrameCount = 10;    // cuántos frames seguidos deben superar el umbral
     public float playerMovementThreshold = 0.05f;
+    private float rotationThreshold = 2.0f;
+    private Quaternion expectedRotation;
 
     private Vector3 lastCameraPosition;
     private Vector3 lastPlayerPosition;
@@ -18,7 +20,7 @@ public class CameraOscillationHandler : MonoBehaviour
     {
         if (virtualCamera == null)
             virtualCamera = GetComponent<CinemachineCamera>();
-
+        expectedRotation = playerTransform.rotation;
         camCollider = virtualCamera.GetComponent<CinemachineDeoccluder>();
         lastCameraPosition = transform.position;
         lastPlayerPosition = playerTransform.position;
@@ -40,10 +42,19 @@ public class CameraOscillationHandler : MonoBehaviour
 
         if (oscillatingFrames >= oscillationFrameCount)
         {
-            Debug.LogWarning("Oscilación detectada. Activando corrección.");
+            Debug.Log("Oscilación detectada. Activando corrección.");
             ApplyCameraCorrection();
             oscillatingFrames = 0;
         }
+
+        float angleDifference = Quaternion.Angle(expectedRotation, transform.rotation);
+        if (angleDifference > rotationThreshold)
+        {
+            Debug.Log("Oscilación rotacional detectada.");
+            ApplyCameraCorrection();
+            // Aplicar corrección o suavizado si es necesario
+        }
+       
 
         lastCameraPosition = transform.position;
         lastPlayerPosition = playerTransform.position;
