@@ -1066,7 +1066,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &61840305
 MonoBehaviour:
@@ -1125,7 +1125,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectadoJugador: 0
   explosionPrefabGrande: {fileID: 7332227395223616227, guid: cf915a9612e6f3c4f8cc7973770ba241, type: 3}
-  explosion: {fileID: 8300000, guid: 5bd72084ff5695a489a4cab5746f182c, type: 3}
 --- !u!82 &61840309
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4599,7 +4598,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &341211917
 MonoBehaviour:
@@ -4658,7 +4657,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectadoJugador: 0
   explosionPrefabGrande: {fileID: 7332227395223616227, guid: cf915a9612e6f3c4f8cc7973770ba241, type: 3}
-  explosion: {fileID: 8300000, guid: 5bd72084ff5695a489a4cab5746f182c, type: 3}
 --- !u!82 &341211921
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5637,7 +5635,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1457804097}
   virtualCamera: {fileID: 0}
-  oscillationThreshold: 0.2
   oscillationFrameCount: 10
   playerMovementThreshold: 0.05
 --- !u!1001 &388650207
@@ -11054,7 +11051,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &793368087
 MonoBehaviour:
@@ -11113,7 +11110,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectadoJugador: 0
   explosionPrefabGrande: {fileID: 7332227395223616227, guid: cf915a9612e6f3c4f8cc7973770ba241, type: 3}
-  explosion: {fileID: 8300000, guid: 5bd72084ff5695a489a4cab5746f182c, type: 3}
 --- !u!82 &793368091
 AudioSource:
   m_ObjectHideFlags: 0
@@ -20318,7 +20314,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectadoJugador: 0
   explosionPrefabGrande: {fileID: 7332227395223616227, guid: cf915a9612e6f3c4f8cc7973770ba241, type: 3}
-  explosion: {fileID: 8300000, guid: 5bd72084ff5695a489a4cab5746f182c, type: 3}
 --- !u!114 &1536357617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20360,7 +20355,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &1536357619
 MonoBehaviour:
@@ -24815,7 +24810,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &1843584164
 MonoBehaviour:
@@ -24874,7 +24869,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectadoJugador: 0
   explosionPrefabGrande: {fileID: 7332227395223616227, guid: cf915a9612e6f3c4f8cc7973770ba241, type: 3}
-  explosion: {fileID: 8300000, guid: 5bd72084ff5695a489a4cab5746f182c, type: 3}
 --- !u!82 &1843584168
 AudioSource:
   m_ObjectHideFlags: 0
@@ -28343,7 +28337,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectadoJugador: 0
   explosionPrefabGrande: {fileID: 7332227395223616227, guid: cf915a9612e6f3c4f8cc7973770ba241, type: 3}
-  explosion: {fileID: 8300000, guid: 5bd72084ff5695a489a4cab5746f182c, type: 3}
 --- !u!136 &2065647559
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -28414,7 +28407,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &2065647562
 MonoBehaviour:

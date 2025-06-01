@@ -14,6 +14,7 @@ public class Bala : MonoBehaviour
     public GameObject explosionPrefabMediano;
     public GameObject explosionPrefabGrande;
     public AudioClip explosion;
+    public AudioClip explosionPeq;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,10 +32,9 @@ public class Bala : MonoBehaviour
         }
         Explosion.transform.position = transform.position;
         Destroy(Explosion, 5f);
-        Destroy(gameObject, 5f);        
+        Destroy(gameObject, 5f);
     }
 
-    
 
     // Update is called once per frame
     void Update()
@@ -46,7 +46,7 @@ public class Bala : MonoBehaviour
             if (Ojo == null) continue;
             float distance = Vector3.Distance(transform.position, Ojo.transform.position);
             if (distance < 0.8f)
-            {                 
+            {
                 Ojo.transform.parent.GetComponent<Enemigo>().DamageEnemigo();// explota
                 Ojos = GameObject.FindGameObjectsWithTag("ojos");
             }
@@ -59,6 +59,8 @@ public class Bala : MonoBehaviour
             {
                 GameObject ExplosionTrampa = Instantiate(explosionPrefabMediano, transform.position, Quaternion.identity);
                 ExplosionTrampa.transform.position = Trampa.transform.position;
+                audioSource.clip = explosionPeq;
+                audioSource.Play();
                 Destroy(Trampa);
                 Destroy(ExplosionTrampa, 3f);
                 Trampas = GameObject.FindGameObjectsWithTag("Trampa");
@@ -71,6 +73,5 @@ public class Bala : MonoBehaviour
         Direccion = _direccion;
         VelocdiadBala = _VelocdiadBala;
     }
-
 
 }

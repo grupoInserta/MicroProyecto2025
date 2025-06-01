@@ -12,6 +12,7 @@ public class ControladorNavMesh : MonoBehaviour
     void Start()
     {
         agente = GetComponent<NavMeshAgent>();
+        agente.updateRotation = false;
     }
     public void DetenerNavMeshAgent()
     {

@@ -10,7 +10,7 @@ public class EstadoAlerta : Estado
     private ControladorVision controladorVision;
     private ControladorNavMesh controladorNavMesh;
     private float angulosBuscando;
-    private float rotationSpeed = 1600f;
+    private float rotationSpeed = 2600f;
     //private AudioSource Alerta;
 
     void Start()

@@ -222,14 +222,14 @@ public class PlayerController : MonoBehaviour
                 capsuleCollider.enabled = true;
                 boxCollider.enabled = true;
             }
-            else if(other.CompareTag("Suelo"))
+            else if (other.CompareTag("Suelo"))
             {
                 restaurarColliders();
             }
 
             saltando = false;
             bajando = false;
-            
+
             if (cayendo)
             {
                 cayendo = false;
@@ -250,11 +250,14 @@ public class PlayerController : MonoBehaviour
         {
             contadorPlacaPulsada++;
             other.gameObject.GetComponent<BoxCollider>().enabled = false;
-            PuertaObjetoScript.IniciarDesplazamiento(1);
-
             if (contadorPlacaPulsada == 2)
             {
                 PuertaObjetoScript.IniciarDesplazamiento(1);// tercer Nivel                
+                Debug.Log("contador placa pulsada: " + contadorPlacaPulsada + " escena: " + GameManager.Instance.escenaActual);
+            }
+            else if (contadorPlacaPulsada == 1 && GameManager.Instance.escenaActual == "SegundoNivel")
+            {
+                PuertaObjetoScript.IniciarDesplazamiento(1);// segundo Nivel
             }
         }
         else if (other.CompareTag("Llave"))
@@ -274,18 +277,6 @@ public class PlayerController : MonoBehaviour
 
     private void RotacionyMovimiento()
     {
-        if (!saltando)
-        {
-            rb.AddForce(Vector3.down * Gravity, ForceMode.Acceleration);
-        }
-        else
-        {
-            rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
-        }
-        if (bajando) // sale de una placa o de una plataforma
-        {
-            rb.AddForce(Vector3.down * extraGravity * 5f, ForceMode.Acceleration);
-        }
 
         // Calcular la direcci�n del movimiento basada en la c�mara (solo forward)
         Vector3 cameraForward = virtualCamera.transform.forward;
@@ -304,6 +295,7 @@ public class PlayerController : MonoBehaviour
         {
             velocidad = velocidadAndando;
             movimientoLateral = false;
+            bajando = false;
             if (ArmaSeleccionada == "Rifle")
             {
                 transionActual = 1;
@@ -313,6 +305,20 @@ public class PlayerController : MonoBehaviour
                 transionActual = 17;
             }
         }
+
+        if (!saltando)
+        {
+            rb.AddForce(Vector3.down * Gravity, ForceMode.Acceleration);
+        }
+        else
+        {
+            rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+        }
+        if (bajando) // sale de una placa o de una plataforma
+        {
+            rb.AddForce(Vector3.down * extraGravity * 5f, ForceMode.Acceleration);
+        }
+
         // saber si en un salto estamos arriba del todo:
         if (saltando && rb.linearVelocity.y > 0)
         {

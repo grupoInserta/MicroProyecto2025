@@ -30,7 +30,7 @@ public class Puerta : MonoBehaviour
         }
         else
         {
-            posFinal = posicionFinalP2;
+            posFinal = posicionFinalP2; // abrir puerta de la llave
         }
 
         StartCoroutine(MoverObjeto(transform, posFinal.position, duracion));
@@ -44,7 +44,7 @@ public class Puerta : MonoBehaviour
 
     private IEnumerator MoverObjeto(Transform obj, Vector3 targetPos, float time)
     {
-       
+
         Vector3 startPos = obj.position;
         float elapsedTime = 0f;
         int contador = 0;
@@ -58,6 +58,6 @@ public class Puerta : MonoBehaviour
             yield return null; //  pausa la ejecución de la corrutina hasta el siguiente frame.
         }
         obj.position = targetPos;
-  
+
     }
 }

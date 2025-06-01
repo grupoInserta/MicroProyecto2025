@@ -21,6 +21,7 @@ public class Enemigo : MonoBehaviour
         maquinaDeEstados = gameObject.GetComponent("MaquinaDeEstados") as MaquinaDeEstados;
         ScriptPath.andar();
         capsuleCollider = GetComponent<CapsuleCollider>();
+
     }
 
     public void Parar()
@@ -68,11 +69,9 @@ public class Enemigo : MonoBehaviour
 
     public void DamageEnemigo()
     {
-
         GameObject Explosion = Instantiate(explosionPrefabGrande, transform.position, Quaternion.identity);
         Destroy(Explosion, 3f);
         gameObject.tag = "Untagged";
-        // Destroy(gameObject,1f);
         StartCoroutine(DestroyNextFrame());
         capsuleCollider.enabled = false;
     }

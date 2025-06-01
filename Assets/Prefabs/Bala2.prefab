@@ -127,6 +127,7 @@ MonoBehaviour:
   explosionPrefabMediano: {fileID: 7332227395223616227, guid: 561f612706a9e1442b3dc5b6fbf3b69f, type: 3}
   explosionPrefabGrande: {fileID: 0}
   explosion: {fileID: 0}
+  explosionPeq: {fileID: 8300000, guid: 563eaad9a5c6dc0428e4ee57bcd71a19, type: 3}
 --- !u!82 &-4830781874904537721
 AudioSource:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuVictoria : MonoBehaviour
 {
@@ -15,9 +16,14 @@ public class MenuVictoria : MonoBehaviour
         }
     }
 
+    public void VolverAlMenu()
+    {
+        SceneManager.LoadScene("MenuPrincipal");
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
