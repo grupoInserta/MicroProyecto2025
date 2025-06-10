@@ -292,8 +292,15 @@ public class PlayerController : MonoBehaviour
         moveDirection = cameraForward; // La direcci�n es siempre forward        
 
         if (Input.GetKey(KeyCode.W) && !isRolling)
-        {
-            velocidad = velocidadAndando;
+        {            
+            if (saltando)
+            {
+                velocidad = velocidadAndando + 1f;// velocidad cuando salta
+            }
+            else
+            {
+                velocidad = velocidadAndando;
+            }
             movimientoLateral = false;
             bajando = false;
             if (ArmaSeleccionada == "Rifle")

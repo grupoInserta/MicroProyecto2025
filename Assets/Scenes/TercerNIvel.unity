@@ -52289,7 +52289,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: d13280a43e4b3bb45aa23322bf025d6f, type: 3}
     - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: VelocdiadBala
-      value: 7
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6213361420158717677, guid: 8103bc4c65212194ca341858c403ad9f, type: 3}
       propertyPath: virtualCamera
